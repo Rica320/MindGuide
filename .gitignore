@@ -26,33 +26,33 @@ doc/api/
 .flutter-plugins
 .flutter-plugins-dependencies
 
-/.bundle
+UI/.bundle
 
 # Ignore the default SQLite database.
-/db/*.sqlite3
-/db/*.sqlite3-*
+UI/db/*.sqlite3
+UI/db/*.sqlite3-*
 
 # Ignore all logfiles and tempfiles.
-/log/*
-/tmp/*
-!/log/.keep
-!/tmp/.keep
+UI/log/*
+UI/tmp/*
+!UI/log/.keep
+!UI/tmp/.keep
 
 # Ignore pidfiles, but keep the directory.
-/tmp/pids/*
-!/tmp/pids/
-!/tmp/pids/.keep
+UI/tmp/pids/*
+!UI/tmp/pids/
+!UI/tmp/pids/.keep
 
 # Ignore uploaded files in development.
-/storage/*
-!/storage/.keep
-/tmp/storage/*
-!/tmp/storage/
-!/tmp/storage/.keep
+UO/storage/*
+!UI/storage/.keep
+UI/tmp/storage/*
+!UI/tmp/storage/
+!UI/tmp/storage/.keep
 
-/public/assets
+UI/public/assets
 
 # Ignore master key for decrypting credentials and more.
-/config/master.key
-.env
-.byebug_history
+UI/config/master.key
+UI/.env
+UI/.byebug_history
