@@ -1,0 +1,112 @@
+.chat-container {
+    text-align: center;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    width: 85%;
+    margin: 220px;
+}
+
+.start-chat-button {
+    background-color: pink;
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-size: 18px;
+    text-decoration: none;
+    color: white;
+}
+
+.chat-message-left {
+    text-align: left;
+    background-color: #d3d3d3; /* Light gray */
+    border-radius: 12px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    width: 60%;
+}
+
+.chat-message-center {
+    background-color: #d3d3d3; /* Light gray */
+    border-radius: 12px;
+    padding: 10px 20px;
+    margin: 10px auto; /* Center horizontally */
+    width: 60%;
+    text-align: center; /* Center text */
+}
+
+.chat-message-right {
+    text-align: right;
+    background-color: #a9a9a9; /* Dark gray */
+    border-radius: 12px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    color: white;
+    width: 60%;
+    margin-left: auto; /* Align to the right */
+}
+
+@keyframes float1 {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(30px, 20px); }
+    100% { transform: translate(0, 0); }
+}
+
+@keyframes float2 {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(-25px, 30px); }
+    100% { transform: translate(0, 0); }
+}
+
+@keyframes float3 {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(20px, -25px); }
+    100% { transform: translate(0, 0); }
+}
+
+@keyframes float4 {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(-30px, -20px); }
+    100% { transform: translate(0, 0); }
+}
+
+.small-planet-1 {
+    animation: float1 8s ease-in-out infinite;
+}
+
+.small-planet-2 {
+    animation: float2 12s ease-in-out infinite;
+}
+
+.small-planet-3 {
+    animation: float3 10s ease-in-out infinite;
+}
+
+.small-planet-4 {
+    animation: float4 15s ease-in-out infinite;
+}
+
+.space-background {
+    background: #e6e6fa;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: shine 10s infinite;
+}
+
+@keyframes shine {
+    0% {
+        background-color: #e6e6fa;
+    }
+    50% {
+        background-color: #dcdcdc;
+    }
+    100% {
+        background-color: #e6e6fa;
+    }
+}
+
+.center-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

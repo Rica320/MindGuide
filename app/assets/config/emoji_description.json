@@ -1,0 +1,102 @@
+{
+    "angry": {
+        "image": "emoji_10.png",
+        "description": "Feeling or showing strong annoyance, displeasure, or hostility."
+    },
+    "anxious": {
+        "image": "emoji_4.png",
+        "description": "Experiencing worry, unease, or nervousness."
+    },
+    "confused": {
+        "image": "emoji_3.png",
+        "description": "Unable to think clearly; bewildered."
+    },
+    "confused_2": {
+        "image": "emoji_12.png",
+        "description": "Feeling uncertain or unclear about something."
+    },
+    "confused_3": {
+        "image": "emoji_24.png",
+        "description": "Experiencing a state of perplexity or bewilderment."
+    },
+    "delighted": {
+        "image": "emoji_5.png",
+        "description": "Feeling or showing great pleasure."
+    },
+    "happy": {
+        "image": "emoji_2.png",
+        "description": "Feeling or showing pleasure or contentment."
+    },
+    "happy_2": {
+        "image": "emoji_13.png",
+        "description": "Experiencing joy or gladness."
+    },
+    "happy_3": {
+        "image": "emoji_15.png",
+        "description": "Feeling or expressing happiness."
+    },
+    "happy_4": {
+        "image": "emoji_16.png",
+        "description": "Being in a state of well-being and contentment."
+    },
+    "happy_5": {
+        "image": "emoji_17.png",
+        "description": "Showing or causing feelings of pleasure and happiness."
+    },
+    "happy_6": {
+        "image": "emoji_23.png",
+        "description": "Feeling or showing satisfaction."
+    },
+    "happy_7": {
+        "image": "emoji_25.png",
+        "description": "Experiencing or marked by happiness."
+    },
+    "sad": {
+        "image": "emoji_1.png",
+        "description": "Feeling or showing sorrow; unhappy."
+    },
+    "sad_2": {
+        "image": "emoji_14.png",
+        "description": "Experiencing or showing sadness."
+    },
+    "satisfied": {
+        "image": "emoji_19.png",
+        "description": "Contented; pleased."
+    },
+    "satisfied_2": {
+        "image": "emoji_20.png",
+        "description": "Feeling or showing satisfaction."
+    },
+    "satisfied_3": {
+        "image": "emoji_21.png",
+        "description": "Experiencing a state of contentment."
+    },
+    "satisfied_4": {
+        "image": "emoji_22.png",
+        "description": "Being pleased with what has been achieved or received."
+    },
+    "wondering": {
+        "image": "emoji_6.png",
+        "description": "Feeling or expressing curiosity."
+    },
+    "worried": {
+        "image": "emoji_7.png",
+        "description": "Anxious or troubled about actual or potential problems."
+    },
+    "worried_2": {
+        "image": "emoji_8.png",
+        "description": "Experiencing or showing concern or anxiety."
+    },
+    "worried_3": {
+        "image": "emoji_9.png",
+        "description": "Feeling or showing worry."
+    },
+    "worried_4": {
+        "image": "emoji_11.png",
+        "description": "Being anxious or troubled about something."
+    },
+    "worried_5": {
+        "image": "emoji_18.png",
+        "description": "Showing or feeling concern or anxiety."
+    }
+}

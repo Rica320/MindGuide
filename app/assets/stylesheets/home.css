@@ -1,0 +1,35 @@
+.chat-container {
+    text-align: center;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    margin-right: 220px;
+    margin-left: 220px;
+}
+
+.start-chat-button {
+    background-color: pink;
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-size: 18px;
+    text-decoration: none;
+    color: white;
+}
+
+.chat-message-left {
+    text-align: left;
+    background-color: #d3d3d3; /* Light gray */
+    border-radius: 12px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    width: 60%;
+}
+
+.chat-message-right {
+    text-align: right;
+    background-color: #a9a9a9; /* Dark gray */
+    border-radius: 12px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    color: white;
+    width: 60%;
+    margin-left: auto; /* Align to the right */
+}

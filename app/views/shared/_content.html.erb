@@ -1,0 +1,22 @@
+<Script>
+  document.addEventListener('DOMContentLoaded', function() {
+          const robotChatButton = document.getElementById('robot-chat-button');
+          robotChatButton.addEventListener('click', function() {
+              window.location.href = '<%= chat_planet_path %>';
+          });
+            const userButtons = [
+            { id: 'user1-button', url: '/custom_content/1' },
+            { id: 'user2-button', url: '/custom_content/2' },
+            { id: 'user3-button', url: '/custom_content/3' },
+            { id: 'user4-button', url: '/custom_content/4' }
+            ];
+            cnt=1;
+            userButtons.forEach(button => {
+            const userButton = document.getElementById(button.id);
+            userButton.addEventListener('click', function() {
+              window.location.href = button.url;
+            });
+            });
+
+  });
+</Script>

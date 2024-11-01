@@ -1,0 +1,97 @@
+.content-container {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    margin: 0;
+    padding: 0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px;
+}
+
+h1, h2 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.section {
+    margin-bottom: 40px;
+}
+
+/* List Styles */
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    margin-bottom: 10px;
+}
+
+.pastel-rounded {
+    background-color: #f2f3f2c2; /* Green pastel color */
+    border-radius: 15px; /* Rounded corners */
+    padding: 20px; /* Optional: Add some padding */
+    margin: 30px;
+}
+.pastel-rounded-user1 {
+    background-color: #e8d6da; /* Pink pastel color */
+    border-radius: 15px; /* Rounded corners */
+    padding: 20px; /* Optional: Add some padding */
+    margin: 30px;
+}
+
+.pastel-rounded-user2 {
+    background-color: #d6e8da; /* Green pastel color */
+    border-radius: 15px; /* Rounded corners */
+    padding: 20px; /* Optional: Add some padding */
+    margin: 30px;
+}
+
+.pastel-rounded-user3 {
+    background-color: #d6dae8; /* Blue pastel color */
+    border-radius: 15px; /* Rounded corners */
+    padding: 20px; /* Optional: Add some padding */
+    margin: 30px;
+}
+
+.pastel-rounded-user4 {
+    background-color: #e8e6d6; /* Yellow pastel color */
+    border-radius: 15px; /* Rounded corners */
+    padding: 20px; /* Optional: Add some padding */
+    margin: 30px;
+}
+
+.user-button {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    border-radius: 15px; /* Rounded corners */
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 25px;
+    display: flex;
+    align-items: center;
+  }
+
+  .user1-button {
+    background: #ffd1dc;
+  }
+
+  .user2-button {
+    background: #d1ffd6;
+  }
+
+  .user3-button {
+    background: #d1e0ff;
+  }
+
+  .user4-button {
+    background: #fff5d1;
+  }
+
+  .user1-icon,
+  .user2-icon,
+  .user3-icon,
+  .user4-icon {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+  }

@@ -1,0 +1,62 @@
+<div class="content-container">
+  <button id="robot-chat-button" class="robot-chat-button" style="background: none; border: none; cursor: pointer;">
+      <img src="<%= asset_path('icons/robot-chat.png') %>" alt="robot-chat" class="robot-chat-icon"
+      style="width: 50px; height: 50px;" title="Talk to chatbot again!">
+  </button>
+
+  <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          const robotChatButton = document.getElementById('robot-chat-button');
+          robotChatButton.addEventListener('click', function() {
+              window.location.href = '<%= chat_planet_path %>';
+          });
+      });
+  </script>
+  <div style="display: flex; justify-content: space-between; gap: 10px;">
+    <button id="user1-button" class="user-button user1-button">
+      <img src="<%= asset_path('icons/planet.png') %>" alt="user1-icon" class="user1-icon" title="User 1">
+      User 1
+    </button>
+    <button id="user2-button" class="user-button user2-button">
+      <img src="<%= asset_path('icons/planet.png') %>" alt="user2-icon" class="user2-icon" title="User 2">
+      User 2
+    </button>
+    <button id="user3-button" class="user-button user3-button">
+      <img src="<%= asset_path('icons/planet.png') %>" alt="user3-icon" class="user3-icon" title="User 3">
+      User 3
+    </button>
+    <button id="user4-button" class="user-button user4-button">
+      <img src="<%= asset_path('icons/planet.png') %>" alt="user4-icon" class="user4-icon" title="User 4">
+      User 4
+    </button>
+  </div>
+  <h1>Guided practices for any mindset, any feeling, any aspiration</h1>
+
+  <div class="pastel-rounded-user<%= @id %>">
+    <h2>Summary of discussion</h2>
+    <ul>
+      <% @summary.each do |line| %>
+        <li><%= line %></li>
+      <% end %>
+    </ul>
+  </div>
+
+  <div class="pastel-rounded-user<%= @id %>">
+    <h2>Your point of view</h2>
+    <ul>
+      <% @point_of_view.each do |line| %>
+      <li><%= line %></li>
+      <% end %>
+    </ul>
+  </div>
+
+  <div class="pastel-rounded-user<%= @id %>">
+    <h2>Pick up topic for you</h2>
+    <ul>
+      <% @pick_up.each do |line| %>
+        <li><%= line %></li>
+      <% end %>
+    </ul>
+  </div>
+</div>
+<%= render 'shared/content'  %>
