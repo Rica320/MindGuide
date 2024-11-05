@@ -2,6 +2,7 @@
 
 const sdk = require("microsoft-cognitiveservices-speech-sdk");
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const speakText = require("../textToSpeech/pollySpeak");
 
 // Get environment variables for Speech API key and region
 const speechKey = process.env.REACT_APP_SPEECH_KEY;
@@ -34,6 +35,7 @@ export async function listener() {
         if (evt.result.reason === sdk.ResultReason.RecognizedSpeech) {
             console.log(`\tText=${evt.result.text}`);
             console.log(`\tSpeaker ID=${evt.result.speakerId}`);
+            speakText(evt.result.text);
         } else if (evt.result.reason === sdk.ResultReason.NoMatch) {
             console.log(`\tNOMATCH: Speech could not be TRANSCRIBED: ${evt.result.noMatchDetails}`);
         }

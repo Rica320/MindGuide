@@ -8,7 +8,7 @@ function App() {
   const toggleConversation = () => {
 
     if (isListening) {
-      // stopListener();
+      stopListener();
     } else {
       listener();
     }
