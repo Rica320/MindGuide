@@ -40,13 +40,13 @@ export async function listener() {
 
             // remove all the non-alphanumeric characters and if empty string, return
             let message = evt.result.text.replace(/[^a-zA-Z0-9 ]/g, "");
-            if (!message) {
+            if (!message || message === "Play") { // weird bug where it transcribes "Play" by hearing nothing
                 return;
             }
 
             // speak in browser
             console.log("Moderator will respond");
-            getModeratorResponse(evt.result.text).then((response) => {
+            getModeratorResponse(evt.result.speakerId, evt.result.text).then((response) => {
                 console.log("Moderator Response: ", response);
                 synth.speak(new SpeechSynthesisUtterance(response));
                 // speakText(response);
