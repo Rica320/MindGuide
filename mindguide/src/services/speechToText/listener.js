@@ -1,8 +1,8 @@
 // TODO: REFACTOR THIS SPAGHETTI CODE
-
 const sdk = require("microsoft-cognitiveservices-speech-sdk");
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const speakText = require("../textToSpeech/pollySpeak");
+const {getModeratorResponse} = require("../LLM/llm_model");
 
 // Get environment variables for Speech API key and region
 const speechKey = process.env.REACT_APP_SPEECH_KEY;
@@ -17,6 +17,8 @@ if (!speechKey || !serviceRegion) {
     process.exit(1);
 }
 
+const synth = window.speechSynthesis; // ONLY FOR TESTING IN BROWSER
+
 export async function listener() {
     const speechConfig = sdk.SpeechConfig.fromSubscription(speechKey, serviceRegion);
     speechConfig.speechRecognitionLanguage = language;
@@ -27,7 +29,7 @@ export async function listener() {
 
     // Callback Functions
     const onRecognitionCanceled = (_, evt) => console.log("Canceled event");
-    const onSessionStopped = (_ , evt) => console.log("SessionStopped event");
+    const onSessionStopped = (_, evt) => console.log("SessionStopped event");
     const onSessionStarted = (_, evt) => console.log("SessionStarted event");
 
     const onTranscribed = (s, evt) => {
@@ -35,7 +37,22 @@ export async function listener() {
         if (evt.result.reason === sdk.ResultReason.RecognizedSpeech) {
             console.log(`\tText=${evt.result.text}`);
             console.log(`\tSpeaker ID=${evt.result.speakerId}`);
-            speakText(evt.result.text);
+
+            // remove all the non-alphanumeric characters and if empty string, return
+            let message = evt.result.text.replace(/[^a-zA-Z0-9 ]/g, "");
+            if (!message) {
+                return;
+            }
+
+            // speak in browser
+            console.log("Moderator will respond");
+            getModeratorResponse(evt.result.text).then((response) => {
+                console.log("Moderator Response: ", response);
+                synth.speak(new SpeechSynthesisUtterance(response));
+                // speakText(response);
+            });
+            // speakText(message);
+
         } else if (evt.result.reason === sdk.ResultReason.NoMatch) {
             console.log(`\tNOMATCH: Speech could not be TRANSCRIBED: ${evt.result.noMatchDetails}`);
         }
