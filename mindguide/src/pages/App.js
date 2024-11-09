@@ -1,6 +1,6 @@
 import env from "../config";
 import "../styles/App.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 if (env === "production") {
   var { getModeratorResponse } = require("../services/LLM/llm_model");
   var { listener, stopListener } = require("../services/speechToText/listener");
@@ -8,6 +8,13 @@ if (env === "production") {
 
 function App() {
   const [isListening, setIsListening] = useState(undefined);
+  const [svgContent, setSvgContent] = useState("");
+
+  useEffect(() => {
+    fetch("/planet_svg.html")
+      .then((response) => response.text())
+      .then((data) => setSvgContent(data));
+  }, []);
   const env = "test"; // 'production' or 'test'
   const toggleConversation = () => {
     if (env === "production") {
@@ -32,9 +39,10 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <div className="Hello-World">
-          <h1>Hello World</h1>
-        </div>
+        <div
+          dangerouslySetInnerHTML={{ __html: svgContent }}
+          style={{ width: "100%", height: "100%" }}
+        />
         <button
           onClick={toggleConversation}
           className="start-conversation-button"
