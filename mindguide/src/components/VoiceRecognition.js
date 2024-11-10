@@ -7,8 +7,7 @@ const VoiceRecognition = () => {
 
   useEffect(() => {
     const startChatButton = document.querySelector(".start-chat-button");
-    startChatButton.addEventListener("click", function (event) {
-      event.preventDefault();
+    const startRecognition = () => {
       startChatButton.style.display = "none";
       const recognition = new (window.SpeechRecognition ||
         window.webkitSpeechRecognition)();
@@ -26,6 +25,12 @@ const VoiceRecognition = () => {
       };
 
       recognition.start();
+    };
+
+    startChatButton.addEventListener("click", function (event) {
+      event.preventDefault();
+      startRecognition();
+      setInterval(startRecognition, 10000);
     });
   }, []);
 
