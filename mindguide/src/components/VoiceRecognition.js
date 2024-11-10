@@ -47,7 +47,9 @@ const VoiceRecognition = () => {
           }}
         />
       )}
-      {response && <div>Response: {response}</div>}
+      {response && (
+        <div class="voice-recognition-response">Response: {response}</div>
+      )}
     </div>
   );
 };

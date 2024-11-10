@@ -30,29 +30,18 @@ const GeminiComponent = ({ prompt, onResponse }) => {
     return <div>Loading...</div>;
   }
 
-  //const contentText = response.candidates?.[0]?.content?.parts?.[0]?.text || "No response";
+  let contentText =
+    response.candidates?.[0]?.content?.parts?.[0]?.text || "No response";
 
-  const contentText =
-    response &&
-    response.candidates &&
-    Array.isArray(response.candidates) &&
-    response.candidates[0] &&
-    response.candidates[0].content &&
-    Array.isArray(response.candidates[0].content.parts) &&
-    response.candidates[0].content.parts[0] &&
-    response.candidates[0].content.parts[0].text
-      ? response.candidates[0].content.parts[0].text
-      : "No response";
-
-  console.log(JSON.stringify(contentText));
-
-  return (
-    <div>
-      {typeof contentText === "string"
-        ? contentText
-        : "Invalid response format"}
-    </div>
-  );
+  if (typeof contentText === "string") {
+    contentText = contentText
+      .replace(/\*\*(.*?)\*\*/g, "\n$1\n")
+      .replace(/\*(.*?)\*/g, "\n$1\n");
+    console.log(JSON.stringify(contentText));
+    return <div className="gemini-response">{contentText}</div>;
+  } else {
+    return <div>Invalid response</div>;
+  }
 };
 
 export default GeminiComponent;
