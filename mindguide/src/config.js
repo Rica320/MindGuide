@@ -1,3 +1,3 @@
-const env = "test"; // 'production' or 'test'
+const env = "production"; // 'production' or 'test'
 
 export default env;

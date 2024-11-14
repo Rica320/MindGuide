@@ -10,6 +10,7 @@ if (env === "production") {
 function App() {
   const [isListening, setIsListening] = useState(undefined);
   const [svgContent, setSvgContent] = useState("");
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     fetch("/planet_svg.html")
@@ -44,12 +45,46 @@ function App() {
             dangerouslySetInnerHTML={{ __html: svgContent }}
             style={{ width: "100%", height: "100%" }}
           />
-          <button
-            onClick={toggleConversation}
-            className="start-conversation-button"
-          >
-            {isListening ? "Stop Conversation" : "Start Conversation"}
-          </button>
+          <div className="fixed bottom-8 right-8 flex gap-4">
+            {/* Stop Button */}
+            {isListening ? (
+              <button
+                className="stop-button"
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                aria-label="Stop conversation"
+              >
+                <svg
+                  className="icon"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            ) : (
+              <button
+                onClick={toggleConversation}
+                className="chat-button pulse"
+                aria-label="Start conversation"
+              >
+                <svg
+                  className="chat-icon"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z" />
+                </svg>
+              </button>
+            )}
+          </div>
         </header>
       </div>
     );
