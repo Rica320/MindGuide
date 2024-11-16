@@ -44,6 +44,14 @@ export async function listener() {
   const onSessionStarted = (_, evt) => console.log("SessionStarted event");
 
   const onTranscribed = (s, evt) => {
+    if (
+      // As modelator speaks always as a first speaker, he is Guest-1
+      evt.result.speakerId === "Guest-1" ||
+      evt.result.speakerId === "Unknown"
+    ) {
+      console.log("\nIgnore transcribing as Moderator speaking:");
+      return;
+    }
     console.log("\nTRANSCRIBED:");
     if (evt.result.reason === sdk.ResultReason.RecognizedSpeech) {
       console.log(`\tText=${evt.result.text}`);
@@ -61,8 +69,21 @@ export async function listener() {
       getModeratorResponse(evt.result.speakerId, evt.result.text).then(
         (response) => {
           console.log("Moderator Response: ", response);
-          synth.speak(new SpeechSynthesisUtterance(response));
-          // speakText(response);
+
+          const utterance = new SpeechSynthesisUtterance(response);
+
+          //Just to see when the speech starts and ends
+          utterance.onstart = function () {
+            console.log("Speech started");
+          };
+
+          utterance.onend = function () {
+            console.log("Speech ended");
+          };
+
+          // Speak the response
+          synth.speak(utterance);
+          //speakText(response);
         }
       );
       // speakText(message);
@@ -74,6 +95,13 @@ export async function listener() {
   };
 
   const onTranscribing = (s, evt) => {
+    if (
+      evt.result.speakerId === "Guest-1" ||
+      evt.result.speakerId === "Unknown"
+    ) {
+      console.log("\nTRANSCRIBE DISABLED...Moderator speaking:");
+      return;
+    }
     console.log("TRANSCRIBING:");
     console.log(`\tText=${evt.result.text}`);
     console.log(`\tSpeaker ID=${evt.result.speakerId}`);
