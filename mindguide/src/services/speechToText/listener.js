@@ -1,4 +1,6 @@
 // TODO: REFACTOR THIS SPAGHETTI CODE
+import log from "../../utils/logger";
+
 const sdk = require("microsoft-cognitiveservices-speech-sdk");
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const speakText = require("../textToSpeech/pollySpeak");
@@ -22,6 +24,7 @@ if (!speechKey || !serviceRegion) {
 const synth = window.speechSynthesis; // ONLY FOR TESTING IN BROWSER
 
 export async function listener() {
+  log.info("Starting listener");
   const speechConfig = sdk.SpeechConfig.fromSubscription(
     speechKey,
     serviceRegion
@@ -49,7 +52,10 @@ export async function listener() {
       evt.result.speakerId === "Guest-1" ||
       evt.result.speakerId === "Unknown"
     ) {
-      console.log("\nIgnore transcribing as Moderator speaking:");
+      console.log(
+        "\nDisable transcribing as Moderator is speaking:" +
+          evt.result.speakerId
+      );
       return;
     }
     console.log("\nTRANSCRIBED:");
@@ -67,9 +73,10 @@ export async function listener() {
       // speak in browser
       console.log("Moderator will respond");
       getModeratorResponse(evt.result.speakerId, evt.result.text).then(
+        // log.info(evt.result.speakerId + ": " + evt.result.text),
         (response) => {
-          console.log("Moderator Response: ", response);
-
+          console.log("Moderator: ", response);
+          // log.info("Moderator: ", response);
           const utterance = new SpeechSynthesisUtterance(response);
 
           //Just to see when the speech starts and ends

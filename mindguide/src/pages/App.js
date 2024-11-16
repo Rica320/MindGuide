@@ -2,6 +2,8 @@ import env from "../config";
 import "../styles/App.css";
 import { useEffect, useState } from "react";
 import VoiceRecognition from "../components/VoiceRecognition";
+import log from "../utils/logger";
+
 if (env === "production") {
   var { getModeratorResponse } = require("../services/LLM/llm_model");
   var { listener, stopListener } = require("../services/speechToText/listener");
@@ -22,6 +24,7 @@ function App() {
       // send message to start conversation
       getModeratorResponse("user", "start conversation").then((response) => {
         console.log("Moderator Response: ", response);
+        log.info("Moderator: ", response);
         // speakText(response);
         window.speechSynthesis.speak(new SpeechSynthesisUtterance(response));
       });
@@ -50,6 +53,7 @@ function App() {
             {isListening ? (
               <button
                 className="stop-button"
+                onClick={toggleConversation}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 aria-label="Stop conversation"

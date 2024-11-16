@@ -1,7 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const fs = require("fs");
+const path = require("path");
 const winston = require("winston");
+const cors = require("cors");
 
 const app = express();
 const port = 3001;
@@ -9,8 +11,9 @@ const port = 3001;
 if (!fs.existsSync("logs")) {
   fs.mkdirSync("logs");
   console.log("Logs directory created");
+} else {
+  console.log("Logs directory already exists");
 }
-console.log("Logs directory already exists");
 
 const logger = winston.createLogger({
   level: "info",
@@ -25,6 +28,13 @@ const logger = winston.createLogger({
     new winston.transports.File({ filename: "logs/app.log" }),
   ],
 });
+
+// Use CORS middleware to allow requests from the React app
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  })
+);
 
 app.use(bodyParser.json());
 
