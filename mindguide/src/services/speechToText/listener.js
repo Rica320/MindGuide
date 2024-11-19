@@ -3,7 +3,7 @@ import log from "../../utils/logger";
 
 const sdk = require("microsoft-cognitiveservices-speech-sdk");
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const speakText = require("../textToSpeech/pollySpeak");
+const { speakText } = require("../textToSpeech/pollySpeak");
 const { getModeratorResponse } = require("../LLM/llm_model");
 
 // Get environment variables for Speech API key and region
@@ -70,30 +70,19 @@ export async function listener() {
         return;
       }
 
-      // speak in browser
+      // speak
       console.log("Moderator will respond");
       getModeratorResponse(evt.result.speakerId, evt.result.text).then(
         // log.info(evt.result.speakerId + ": " + evt.result.text),
         (response) => {
-          console.log("Moderator: ", response);
-          // log.info("Moderator: ", response);
-          const utterance = new SpeechSynthesisUtterance(response);
-
-          //Just to see when the speech starts and ends
-          utterance.onstart = function () {
-            console.log("Speech started");
-          };
-
-          utterance.onend = function () {
-            console.log("Speech ended");
-          };
-
-          // Speak the response
-          synth.speak(utterance);
-          //speakText(response);
+          console.log("Moderator Response: ", response);
+          // whith the browser TTS
+          //synth.speak(new SpeechSynthesisUtterance(response));
+          // with polly
+          speakText(response);
         }
       );
-      // speakText(message);
+
     } else if (evt.result.reason === sdk.ResultReason.NoMatch) {
       console.log(
         `\tNOMATCH: Speech could not be TRANSCRIBED: ${evt.result.noMatchDetails}`

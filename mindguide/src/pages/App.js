@@ -10,7 +10,7 @@ if (env === "production") {
 }
 
 function App() {
-  const [isListening, setIsListening] = useState(undefined);
+  const [isListening, setIsListening] = useState(false);
   const [svgContent, setSvgContent] = useState("");
   const [isHovered, setIsHovered] = useState(false);
 
@@ -21,18 +21,18 @@ function App() {
   }, []);
   const toggleConversation = () => {
     if (env === "production") {
-      // send message to start conversation
-      getModeratorResponse("user", "start conversation").then((response) => {
+      
+      if (isListening) {
+        stopListener();
+      } else {
+        // send message to start conversation
+        getModeratorResponse("user", "start conversation").then((response) => {
         console.log("Moderator Response: ", response);
         log.info("Moderator: ", response);
         // speakText(response);
         window.speechSynthesis.speak(new SpeechSynthesisUtterance(response));
       });
-
-      if (isListening) {
-        stopListener();
-      } else {
-        listener();
+      listener();
       }
       setIsListening(!isListening);
     } else {
