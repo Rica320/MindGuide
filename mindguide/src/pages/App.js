@@ -3,6 +3,7 @@ import "../styles/App.css";
 import { useEffect, useState } from "react";
 import VoiceRecognition from "../components/VoiceRecognition";
 import log from "../utils/logger";
+const { speakText } = require("../services/textToSpeech/pollySpeak");
 
 if (env === "production") {
   var { getModeratorResponse } = require("../services/LLM/llm_model");
@@ -30,7 +31,11 @@ function App() {
         console.log("Moderator Response: ", response);
         log.info("Moderator: ", response);
         // speakText(response);
-        window.speechSynthesis.speak(new SpeechSynthesisUtterance(response));
+        //with browser speech synthesis
+        //window.speechSynthesis.speak(new SpeechSynthesisUtterance(response));
+        //with polly
+        speakText(response);
+
       });
       listener();
       }
