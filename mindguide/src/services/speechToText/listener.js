@@ -21,8 +21,6 @@ if (!speechKey || !serviceRegion) {
   process.exit(1);
 }
 
-const synth = window.speechSynthesis; // ONLY FOR TESTING IN BROWSER
-
 export async function listener() {
   log.info("Starting listener");
   const speechConfig = sdk.SpeechConfig.fromSubscription(
@@ -77,12 +75,17 @@ export async function listener() {
         (response) => {
           console.log("Moderator Response: ", response);
           // whith the browser TTS
-          //synth.speak(new SpeechSynthesisUtterance(response));
+
+          const utterance = new SpeechSynthesisUtterance(response);
+          document.querySelector(".App-header").classList.add("blue");
+          utterance.onend = () => {
+            document.querySelector(".App-header").classList.remove("blue");
+          };
+          window.speechSynthesis.speak(utterance);
           // with polly
-          speakText(response);
+          //speakText(response);
         }
       );
-
     } else if (evt.result.reason === sdk.ResultReason.NoMatch) {
       console.log(
         `\tNOMATCH: Speech could not be TRANSCRIBED: ${evt.result.noMatchDetails}`

@@ -22,22 +22,25 @@ function App() {
   }, []);
   const toggleConversation = () => {
     if (env === "production") {
-      
       if (isListening) {
         stopListener();
       } else {
         // send message to start conversation
         getModeratorResponse("user", "start conversation").then((response) => {
-        console.log("Moderator Response: ", response);
-        log.info("Moderator: ", response);
-        // speakText(response);
-        //with browser speech synthesis
-        //window.speechSynthesis.speak(new SpeechSynthesisUtterance(response));
-        //with polly
-        speakText(response);
-
-      });
-      listener();
+          console.log("Moderator Response: ", response);
+          log.info("Moderator: ", response);
+          // speakText(response);
+          //with browser speech synthesis
+          const utterance = new SpeechSynthesisUtterance(response);
+          document.querySelector(".App-header").classList.add("blue");
+          utterance.onend = () => {
+            document.querySelector(".App-header").classList.remove("blue");
+          };
+          window.speechSynthesis.speak(utterance);
+          //with polly
+          //speakText(response);
+        });
+        listener();
       }
       setIsListening(!isListening);
     } else {

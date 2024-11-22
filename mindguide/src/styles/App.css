@@ -36,6 +36,29 @@
   color: white;
 }
 
+.App-header.blue {
+  /* background-color: rgba(8, 33, 42, 0.5) !important; */
+  animation: shine-blue 30s infinite !important;
+}
+
+@keyframes shine-blue {
+  0% {
+    background-color: rgba(163, 193, 231, 0.5);
+  }
+  25% {
+    background-color: rgba(112, 147, 188, 0.5);
+  }
+  50% {
+    background-color: rgba(59, 111, 155, 0.5);
+  }
+  75% {
+    background-color: rgba(9, 65, 129, 0.5);
+  }
+  100% {
+    background-color: rgba(9, 21, 35, 0.5);
+  }
+}
+
 .App-link {
   color: #61dafb;
 }
@@ -184,6 +207,8 @@
   }
 }
 
+
+
 .center-container {
   position: absolute;
   top: 50%;
@@ -242,10 +267,11 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background-color: #dc2626; /* Red color */
+  background-color: #f0b0b0; /* Red color */
   border: none;
+  color: rgb(79, 75, 75);
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(64, 47, 47, 0.15);
   transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
   display: flex;
   align-items: center;
@@ -253,8 +279,8 @@
 }
 
 .stop-button:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-  background-color: #b91c1c; /* Darker red on hover */
+  box-shadow: 0 6px 16px  rgb(79, 75, 75);
+  background-color: #eb6d6d; /* Darker red on hover */
 }
 
 .stop-button:active {
