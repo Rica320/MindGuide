@@ -260,14 +260,20 @@
   animation: pulse 2s infinite;
 }
 
-.stop-button {
+.button-container {
   position: absolute;
   top: 85%;
   left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px; /* Adjust the gap between buttons as needed */
+}
+
+/* App.css */
+.stop-button, .terminate-button {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background-color: #f0b0b0; /* Red color */
   border: none;
   color: rgb(79, 75, 75);
   cursor: pointer;
@@ -278,26 +284,43 @@
   justify-content: center;
 }
 
+.stop-button {
+  background-color: #f0b0b0; /* Red color */
+}
+
+.terminate-button {
+  background-color: #f0e68c; /* Yellow color */
+}
+
 .stop-button:hover {
-  box-shadow: 0 6px 16px  rgb(79, 75, 75);
+  box-shadow: 0 6px 16px rgb(79, 75, 75);
   background-color: #eb6d6d; /* Darker red on hover */
+}
+
+.terminate-button:hover {
+  box-shadow: 0 6px 16px rgb(79, 75, 75);
+  background-color: #ac9c40; /* Darker yellow on hover */
 }
 
 .stop-button:active {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.stop-icon {
+.terminate-button:active {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.stop-icon, .terminate-icon {
   width: 24px;
   height: 24px;
   position: relative;
 }
 
-.stop-icon::before,
-.stop-icon::after {
+.stop-icon::before, .stop-icon::after,
+.terminate-icon::before, .terminate-icon::after {
   content: '';
   position: absolute;
-  top: 85%;
+  top: 50%;
   left: 50%;
   width: 20px;
   height: 2px;
@@ -305,10 +328,10 @@
   border-radius: 1px;
 }
 
-.stop-icon::before {
+.stop-icon::before, .terminate-icon::before {
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
-.stop-icon::after {
+.stop-icon::after, .terminate-icon::after {
   transform: translate(-50%, -50%) rotate(-45deg);
 }

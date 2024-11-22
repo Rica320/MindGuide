@@ -56,7 +56,7 @@ function App() {
             dangerouslySetInnerHTML={{ __html: svgContent }}
             style={{ width: "100%", height: "100%" }}
           />
-          <div className="fixed bottom-8 right-8 flex gap-4">
+          <div className="button-container">
             {/* Stop Button */}
             {isListening ? (
               <button
@@ -93,6 +93,35 @@ function App() {
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z" />
+                </svg>
+              </button>
+            )}
+
+            {/* Terminate Button */}
+            {isListening && (
+              <button
+                className="terminate-button"
+                onClick={() => {
+                  window.speechSynthesis.cancel();
+                  document
+                    .querySelector(".App-header")
+                    .classList.remove("blue");
+                }}
+                aria-label="Terminate speaking"
+              >
+                <svg
+                  className="terminate-icon"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             )}
