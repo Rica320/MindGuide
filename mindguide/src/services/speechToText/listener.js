@@ -6,6 +6,9 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const { speakText } = require("../textToSpeech/pollySpeak");
 const { getModeratorResponse } = require("../LLM/llm_model");
 
+// variable to monitor the silence 
+let silenceTimer;
+
 // Get environment variables for Speech API key and region
 const speechKey = process.env.REACT_APP_SPEECH_KEY;
 const serviceRegion = process.env.REACT_APP_SPEECH_REGION;
@@ -46,7 +49,7 @@ export async function listener() {
 
   const onTranscribed = (s, evt) => {
     if (
-      // As modelator speaks always as a first speaker, he is Guest-1
+      // As moderator speaks always as a first speaker, he is Guest-1
       evt.result.speakerId === "Guest-1" ||
       evt.result.speakerId === "Unknown"
     ) {
@@ -69,23 +72,7 @@ export async function listener() {
       }
 
       // speak
-      console.log("Moderator will respond");
-      getModeratorResponse(evt.result.speakerId, evt.result.text).then(
-        // log.info(evt.result.speakerId + ": " + evt.result.text),
-        (response) => {
-          console.log("Moderator Response: ", response);
-          // whith the browser TTS
-
-          const utterance = new SpeechSynthesisUtterance(response);
-          document.querySelector(".App-header").classList.add("blue");
-          utterance.onend = () => {
-            document.querySelector(".App-header").classList.remove("blue");
-          };
-          window.speechSynthesis.speak(utterance);
-          // with polly
-          //speakText(response);
-        }
-      );
+      speak(evt.result.speakerId, evt.result.text);
     } else if (evt.result.reason === sdk.ResultReason.NoMatch) {
       console.log(
         `\tNOMATCH: Speech could not be TRANSCRIBED: ${evt.result.noMatchDetails}`
@@ -94,6 +81,14 @@ export async function listener() {
   };
 
   const onTranscribing = (s, evt) => {
+    // resets the silence timer if the function is called
+    clearTimeout(silenceTimer);
+    //Set a new  timer
+    silenceTimer = setTimeout(() => {
+      silenceDetected();
+    }, 10000); // 10 second
+
+    // if the moderator is speaking the transcription is disabled 
     if (
       evt.result.speakerId === "Guest-1" ||
       evt.result.speakerId === "Unknown"
@@ -136,6 +131,32 @@ export async function listener() {
   } catch (error) {
     console.error(`Encountered exception: ${error}`);
   }
+}
+
+function silenceDetected() {
+  console.log("Silence detected! No activity for 10 seconds.");
+  speak("", "No one has spoken for 10 seconds, considering what has been said you intervene to reactivate the conversation by calling back a participant who has spoken little");
+}
+
+function speak(speakerId, text){
+  // speak
+  console.log("Moderator will respond");
+  getModeratorResponse(speakerId, text).then(
+    // log.info(evt.result.speakerId + ": " + evt.result.text),
+    (response) => {
+      console.log("Moderator Response: ", response);
+      // whith the browser TTS
+
+      const utterance = new SpeechSynthesisUtterance(response);
+      document.querySelector(".App-header").classList.add("blue");
+      utterance.onend = () => {
+        document.querySelector(".App-header").classList.remove("blue");
+      };
+      window.speechSynthesis.speak(utterance);
+      // with polly
+      //speakText(response);
+    }
+  );
 }
 
 export async function stopListener() {
