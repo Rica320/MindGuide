@@ -6,7 +6,7 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const { speakText } = require("../textToSpeech/pollySpeak");
 const { getModeratorResponse } = require("../LLM/llm_model");
 
-// variable to monitor the silence 
+// variable to monitor the silence
 let silenceTimer;
 
 // Get environment variables for Speech API key and region
@@ -24,7 +24,7 @@ if (!speechKey || !serviceRegion) {
   process.exit(1);
 }
 
-export async function listener() {
+export async function listener(modelType) {
   log.info("Starting listener");
   const speechConfig = sdk.SpeechConfig.fromSubscription(
     speechKey,
@@ -63,6 +63,7 @@ export async function listener() {
     if (evt.result.reason === sdk.ResultReason.RecognizedSpeech) {
       console.log(`\tText=${evt.result.text}`);
       console.log(`\tSpeaker ID=${evt.result.speakerId}`);
+      console.log(`\tModel type=${modelType}`);
 
       // remove all the non-alphanumeric characters and if empty string, return
       let message = evt.result.text.replace(/[^a-zA-Z0-9 ]/g, "");
@@ -72,7 +73,7 @@ export async function listener() {
       }
 
       // speak
-      speak(evt.result.speakerId, evt.result.text);
+      speak(evt.result.speakerId, evt.result.text, modelType);
     } else if (evt.result.reason === sdk.ResultReason.NoMatch) {
       console.log(
         `\tNOMATCH: Speech could not be TRANSCRIBED: ${evt.result.noMatchDetails}`
@@ -88,7 +89,7 @@ export async function listener() {
       silenceDetected();
     }, 10000); // 10 second
 
-    // if the moderator is speaking the transcription is disabled 
+    // if the moderator is speaking the transcription is disabled
     if (
       evt.result.speakerId === "Guest-1" ||
       evt.result.speakerId === "Unknown"
@@ -135,13 +136,16 @@ export async function listener() {
 
 function silenceDetected() {
   console.log("Silence detected! No activity for 10 seconds.");
-  speak("", "No one has spoken for 10 seconds, considering what has been said you intervene to reactivate the conversation by calling back a participant who has spoken little");
+  speak(
+    "",
+    "No one has spoken for 10 seconds, considering what has been said you intervene to reactivate the conversation by calling back a participant who has spoken little"
+  );
 }
 
-function speak(speakerId, text){
+function speak(speakerId, text, modelType) {
   // speak
   console.log("Moderator will respond");
-  getModeratorResponse(speakerId, text).then(
+  getModeratorResponse(speakerId, text, modelType).then(
     // log.info(evt.result.speakerId + ": " + evt.result.text),
     (response) => {
       console.log("Moderator Response: ", response);

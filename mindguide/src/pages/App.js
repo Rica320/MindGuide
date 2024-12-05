@@ -27,21 +27,24 @@ function App() {
         stopListener();
       } else {
         // send message to start conversation
-        getModeratorResponse("user", "start conversation").then((response) => {
-          console.log("Moderator Response: ", response);
-          log.info("Moderator: ", response);
-          // speakText(response);
-          //with browser speech synthesis
-          const utterance = new SpeechSynthesisUtterance(response);
-          document.querySelector(".App-header").classList.add("blue");
-          utterance.onend = () => {
-            document.querySelector(".App-header").classList.remove("blue");
-          };
-          window.speechSynthesis.speak(utterance);
-          //with polly
-          //speakText(response);
-        });
-        listener();
+        let selectedModel = document.getElementById("model-select").value;
+        getModeratorResponse("user", "start conversation", selectedModel).then(
+          (response) => {
+            console.log("Moderator Response: ", response);
+            log.info("Moderator: ", response);
+            // speakText(response);
+            //with browser speech synthesis
+            const utterance = new SpeechSynthesisUtterance(response);
+            document.querySelector(".App-header").classList.add("blue");
+            utterance.onend = () => {
+              document.querySelector(".App-header").classList.remove("blue");
+            };
+            window.speechSynthesis.speak(utterance);
+            //with polly
+            //speakText(response);
+          }
+        );
+        listener(selectedModel);
       }
       setIsListening(!isListening);
     } else {
@@ -53,6 +56,22 @@ function App() {
     return (
       <div className="App">
         <header className="App-header">
+          <div className="cute-select-container">
+            <label htmlFor="model-select">MindGuide type:</label>
+            <div className="select-wrapper">
+              <select
+                id="model-select"
+                onChange={(e) => {
+                  const selectedModel = e.target.value;
+                  log.info("Selected Model: ", selectedModel);
+                }}
+              >
+                <option value="moderator">Moderator</option>
+                <option value="empatic">Empatic</option>
+                <option value="peer">Peer</option>
+              </select>
+            </div>
+          </div>
           <div
             dangerouslySetInnerHTML={{ __html: svgContent }}
             style={{ width: "100%", height: "100%" }}
