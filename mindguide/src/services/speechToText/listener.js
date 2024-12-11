@@ -156,15 +156,16 @@ function speak(speakerId, text, modelType) {
       utterance.onend = () => {
         document.querySelector(".App-header").classList.remove("blue");
       };
-      window.speechSynthesis.speak(utterance);
+      //window.speechSynthesis.speak(utterance);
       // with polly
-      //speakText(response);
+      speakText(response);
     }
   );
 }
 
 export async function stopListener() {
   transcribingStop = true;
+  clearTimeout(silenceTimer);
 
   if (!conversationTranscriber) {
     return;

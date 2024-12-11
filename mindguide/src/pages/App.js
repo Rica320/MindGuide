@@ -39,9 +39,9 @@ function App() {
             utterance.onend = () => {
               document.querySelector(".App-header").classList.remove("blue");
             };
-            window.speechSynthesis.speak(utterance);
+            //window.speechSynthesis.speak(utterance);
             //with polly
-            //speakText(response);
+            speakText(response);
           }
         );
         listener(selectedModel);
@@ -69,7 +69,7 @@ function App() {
                   }}
                 >
                   <option value="moderator">Moderator</option>
-                  <option value="empatic">Empatic</option>
+                  <option value="empathic">Empathic</option>
                   <option value="peer">Peer</option>
                 </select>
               </div>
