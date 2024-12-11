@@ -39,9 +39,9 @@ function App() {
             utterance.onend = () => {
               document.querySelector(".App-header").classList.remove("blue");
             };
-            //window.speechSynthesis.speak(utterance);
+            window.speechSynthesis.speak(utterance);
             //with polly
-            speakText(response);
+            // speakText(response);
           }
         );
         listener(selectedModel);
