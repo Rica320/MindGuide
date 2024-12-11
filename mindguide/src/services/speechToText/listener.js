@@ -5,9 +5,11 @@ const sdk = require("microsoft-cognitiveservices-speech-sdk");
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const { speakText } = require("../textToSpeech/pollySpeak");
 const { getModeratorResponse } = require("../LLM/llm_model");
+let speaking = false;
 
 // variable to monitor the silence
 let silenceTimer;
+
 
 // Get environment variables for Speech API key and region
 const speechKey = process.env.REACT_APP_SPEECH_KEY;
@@ -143,7 +145,9 @@ function silenceDetected() {
 }
 
 function speak(speakerId, text, modelType) {
+  if(!speaking){
   // speak
+  speaking = true;
   console.log("Moderator will respond");
   getModeratorResponse(speakerId, text, modelType).then(
     // log.info(evt.result.speakerId + ": " + evt.result.text),
@@ -154,13 +158,15 @@ function speak(speakerId, text, modelType) {
       const utterance = new SpeechSynthesisUtterance(response);
       document.querySelector(".App-header").classList.add("blue");
       utterance.onend = () => {
+        speaking = false;
         document.querySelector(".App-header").classList.remove("blue");
       };
-      //window.speechSynthesis.speak(utterance);
+      window.speechSynthesis.speak(utterance);
       // with polly
-      speakText(response);
+      //speakText(response);
     }
   );
+}
 }
 
 export async function stopListener() {
