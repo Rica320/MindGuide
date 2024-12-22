@@ -17,7 +17,8 @@ Empowered by large language models, MindGuide can simulate a live group therapy 
     REACT_APP_OPENAI_KEY=your_openai_api_key
     REACT_APP_OPENAI_MODEL=openai_model
 
-    # to use polly for speech synthesize
+    # only to use polly for speech synthesize
+    REACT_APP_USE_POLLY = true
     REACT_APP_AWS_POLLY_ACCESS_KEY_ID = your_aws_polly_key
     REACT_APP_AWS_POLLY_SECRET_ACCESS_KEY = your_aws_polly_secret
     ```

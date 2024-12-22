@@ -1,9 +1,9 @@
-// TODO: REFACTOR THIS SPAGHETTI CODE
 import log from "../../utils/logger";
 
 const sdk = require("microsoft-cognitiveservices-speech-sdk");
+
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-// const { speakText } = require("../textToSpeech/pollySpeak");
+const { usePolly, speakText } = require("../textToSpeech/pollySpeak");
 const { getModeratorResponse } = require("../LLM/llm_model");
 let speaking = false;
 
@@ -149,17 +149,19 @@ function speak(speakerId, text, modelType) {
   const newPrompt = speakerId ? `${speakerId}: ${text}` : `(${text})`;
   getModeratorResponse(newPrompt, modelType).then(
     (response) => {
-      // with the browser TTS
-      const utterance = new SpeechSynthesisUtterance(response);
-      document.querySelector(".App-header").classList.add("blue");
-      utterance.onend = () => {
-        speaking = false;
-        document.querySelector(".App-header").classList.remove("blue");
-      };
-      window.speechSynthesis.speak(utterance);
-
-      // with polly
-      //speakText(response);
+      if (!usePolly) {
+        // with the browser TTS
+        const utterance = new SpeechSynthesisUtterance(response);
+        document.querySelector(".App-header").classList.add("blue");
+        utterance.onend = () => {
+          speaking = false;
+          document.querySelector(".App-header").classList.remove("blue");
+        };
+        window.speechSynthesis.speak(utterance);
+      } else {
+        // with polly
+        speakText(response);
+      }
     }
   );}
 }

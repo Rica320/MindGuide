@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import VoiceRecognition from "../components/VoiceRecognition";
 import log from "../utils/logger";
 import HandIcon from "../assets/stop-hand.svg";
-// const { speakText } = require("../services/textToSpeech/pollySpeak");
+
+const { usePolly, speakText } = require("../services/textToSpeech/pollySpeak");
+console.log("use polly = ", usePolly);
 
 if (env === "production") {
   var { getModeratorResponse } = require("../services/LLM/llm_model");
@@ -31,16 +33,17 @@ function App() {
         getModeratorResponse('(Start the session now and make sure everyone introduces themselves by their name at first)', selectedModel).then(
           (response) => {
             log.info("Moderator: ", response);
-            // speakText(response);
-            //with browser speech synthesis
-            const utterance = new SpeechSynthesisUtterance(response);
-            document.querySelector(".App-header").classList.add("blue");
-            utterance.onend = () => {
-              document.querySelector(".App-header").classList.remove("blue");
-            };
-            window.speechSynthesis.speak(utterance);
-            //with polly
-            // speakText(response);
+
+            if (!usePolly) {
+              // with browser speech synthesis
+              const utterance = new SpeechSynthesisUtterance(response);
+              document.querySelector(".App-header").classList.add("blue");
+              utterance.onend = () => document.querySelector(".App-header").classList.remove("blue");
+              window.speechSynthesis.speak(utterance);
+            } else {
+              // with polly
+              speakText(response);
+            }
           }
         );
         listener(selectedModel);
