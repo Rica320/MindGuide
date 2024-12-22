@@ -57,7 +57,8 @@ export async function getOpenAIResponse(newPrompt, modelType) {
   try {
     response = JSON.parse(result.choices[0].message.content); // Get the response from the result
   } catch (error) {
-    response = { response: result.choices[0].message.content, intervene: true };
+    const cleanedResponse = result.choices[0].message.content.replace("response:", "");
+    response = { response: cleanedResponse, intervene: true };
     console.log("Error: ", error);
   }
 
