@@ -56,3 +56,5 @@ UI/public/assets
 UI/config/master.key
 UI/.env
 UI/.byebug_history
+
+.DS_Store
