@@ -152,9 +152,8 @@ function speak(speakerId, text, modelType) {
   getModeratorResponse(speakerId, text, modelType).then(
     // log.info(evt.result.speakerId + ": " + evt.result.text),
     (response) => {
-      console.log("Moderator Response: ", response);
-      // whith the browser TTS
-
+      
+      // with the browser TTS
       const utterance = new SpeechSynthesisUtterance(response);
       document.querySelector(".App-header").classList.add("blue");
       utterance.onend = () => {
@@ -162,11 +161,11 @@ function speak(speakerId, text, modelType) {
         document.querySelector(".App-header").classList.remove("blue");
       };
       window.speechSynthesis.speak(utterance);
+
       // with polly
       //speakText(response);
     }
-  );
-}
+  );}
 }
 
 export async function stopListener() {

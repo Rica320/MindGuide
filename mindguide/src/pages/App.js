@@ -30,7 +30,6 @@ function App() {
         let selectedModel = document.getElementById("model-select").value;
         getModeratorResponse("user", "start conversation", selectedModel).then(
           (response) => {
-            console.log("Moderator Response: ", response);
             log.info("Moderator: ", response);
             // speakText(response);
             //with browser speech synthesis

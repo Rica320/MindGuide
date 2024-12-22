@@ -31,9 +31,7 @@ export async function getOpenAIResponse(speakerId, newPrompt, modelType) {
       map_type[modelType] +
       ' YOU MUST SET "intervene" to false EXCEPT ONLY ON THESE SITUATIONS:\n- When you are starting the session or the session is within 15 minutes to the end.\n- If a participant is not allowing others to speak or using inappropriate language or a participant has been inactive for a while.\n- If the discussion is going in circles and no progress is being made.\n\nAlways respond in JSON format. When you don\'t want to intervene send the following: {"response":"","intervene":false}. Otherwise when you need to talk put your dialog in the "response" field and set "intervene" to true. When the conversation is ending, say goodbye and thank the participants. Start the session after receiving this message. ',
   };
-  //console.log("map: ", JSON.stringify(map_type));
-  //console.log("modelType: ", modelType);
-  //console.log("System Prompt: ", JSON.stringify(systemPrompt));
+  
   const result = await client.chat.completions.create({
     messages: [
       systemPrompt,
@@ -60,15 +58,14 @@ export async function getOpenAIResponse(speakerId, newPrompt, modelType) {
     sessionStarted = true;
   }
 
+  console.log("LLM response:", result.choices[0].message.content)
   let response = "";
   try {
     response = JSON.parse(result.choices[0].message.content); // Get the response from the result
-    console.log("Response: ", response);
   } catch (error) {
     response = { response: result.choices[0].message.content, intervene: true };
     console.log("Error: ", error);
   }
-  console.log("Response: ", JSON.stringify(response));
 
   if (!response.response) {
     response.response = ""
@@ -96,7 +93,6 @@ export async function getModeratorResponse(speakerId, speechText, modelType) {
   log.info(speakerId + ": " + speechText);
   const response = await getOpenAIResponse(speakerId, speechText, modelType);
   log.info("Moderator: ", response);
-  console.log("Moderator Response: ", response);
 
   return response;
 }
