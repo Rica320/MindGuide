@@ -1,12 +1,9 @@
 import log from "../../utils/logger";
 
-const { AzureOpenAI } = require("openai");
+const { OpenAI } = require("openai");
 
-const client = new AzureOpenAI({
+const client = new OpenAI({
   apiKey: process.env.REACT_APP_OPENAI_KEY,
-  endpoint: process.env.REACT_APP_OPENAI_ENDPOINT_,
-  deployment: process.env.REACT_APP_AZURE_OPENAI_MODEL,
-  apiVersion: process.env.REACT_APP_AZURE_OPENAI_APIVERSION,
   dangerouslyAllowBrowser: true,
 });
 
@@ -44,9 +41,8 @@ export async function getOpenAIResponse(speakerId, newPrompt, modelType) {
       { role: "user", content: speakerId + " " + newPrompt },
     ],
     temperature: 0.5,
-    max_tokens: 150,
-    top_p: 0.95,
-    model: "gpt-35-turbo-16k",
+    max_completion_tokens: 150,
+    model: process.env.REACT_APP_OPENAI_MODEL,
   });
 
   if (sessionStarted) {

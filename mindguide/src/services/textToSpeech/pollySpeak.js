@@ -1,9 +1,9 @@
 import AWS from 'aws-sdk';
 
 AWS.config.update({
-    region: 'eu-central-1', // your Polly region
-    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,      // your actual access key
-    secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY // your actual secret key
+    region: 'eu-central-1',
+    accessKeyId: process.env.REACT_APP_AWS_POLLY_ACCESS_KEY_ID,
+    secretAccessKey: process.env.REACT_APP_AWS_POLLY_SECRET_ACCESS_KEY,
   });
 
  const Polly = new AWS.Polly();

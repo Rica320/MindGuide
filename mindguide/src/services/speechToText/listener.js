@@ -3,7 +3,7 @@ import log from "../../utils/logger";
 
 const sdk = require("microsoft-cognitiveservices-speech-sdk");
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const { speakText } = require("../textToSpeech/pollySpeak");
+// const { speakText } = require("../textToSpeech/pollySpeak");
 const { getModeratorResponse } = require("../LLM/llm_model");
 let speaking = false;
 
@@ -12,8 +12,8 @@ let silenceTimer;
 
 
 // Get environment variables for Speech API key and region
-const speechKey = process.env.REACT_APP_SPEECH_KEY;
-const serviceRegion = process.env.REACT_APP_SPEECH_REGION;
+const speechKey = process.env.REACT_APP_MICROSOFT_SPEECH_KEY;
+const serviceRegion = process.env.REACT_APP_MICROSOFT_SPEECH_REGION;
 const language = "en-US";
 
 let transcribingStop = false;

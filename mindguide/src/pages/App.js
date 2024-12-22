@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import VoiceRecognition from "../components/VoiceRecognition";
 import log from "../utils/logger";
 import HandIcon from "../assets/stop-hand.svg";
-const { speakText } = require("../services/textToSpeech/pollySpeak");
+// const { speakText } = require("../services/textToSpeech/pollySpeak");
 
 if (env === "production") {
   var { getModeratorResponse } = require("../services/LLM/llm_model");
