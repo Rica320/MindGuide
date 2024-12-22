@@ -11,34 +11,41 @@ let conversationHistory = [];
 let sessionStarted = false;
 let timeStarted = null;
 
-let map_type = {
+const role_behaviors = {
   moderator:
-    "Your responses must be short and foster group dynamics and help all participants to have the opportunity to express their thoughts.",
+    "Your responses must be short and don't express any opinions or suggestion.",
   empathic:
-    "Your responses must be empathic and insightful to the problems of the participants.",
-  peer: "Respond as if you were an equal to the other participants by helping them with their problems as a friend.",
-  default: "",
+    "Your responses must be empathic and minimal.",
+  peer:
+    "Involve others in an active way and make suggestions as a friend.",
+};
+
+const role_temperatures = {
+  moderator: 0.2,
+  empathic: 0.3,
+  peer: 0.5,
 };
 
 // Function to get response with initial instruction only once
 export async function getOpenAIResponse(speakerId, newPrompt, modelType) {
-  modelType = modelType || "default";
+  modelType = modelType || "moderator";
   const systemPrompt = {
     role: "system",
     content:
-      // "As a highly intelligent AI system, you are the moderator (M) in a conversation between three participants (A, B and C), about a group therapy session. Your job is to guide the conversation, without being too intrusive. A good moderator is one that does intervene, but only at the right time and not too often. A good moderator is one who shows empathy, caring, and dives deep into the problems of the participants. Some guidelines for intervention are:\n1. If one or more participants are dominating the conversation and not allowing others to speak.\n2. If a participant is being disrespectful or using inappropriate language.\n3. If the session is near the end (15 minutes).\n4. If the discussion is going in circles and no progress is being made.\n5. If you feel the need to introduce a new topic in the conversation.\n6. If one or more of the participants are not participating in the conversation.\n7. If you are starting the conversation.\n\nPlease always respond via a JSON file that contains a flag INTERVENE and a TEXT field. In case you, as the moderator, have to intervene within the chat conversation, set the INTERVENE flag to true and add your answer in the TEXT field. Make sure both fields are always distinct and INTERVENE is only true or false. If as a moderator you don’t intervene, set INTERVENE to false and place in TEXT your reasoning. If the conversation is ending, say goodbye and thanks to the participants and add a Flag END set to true. Start the session after receiving this message."
-      "For the rest of the conversation, you are Emily, the moderator in a group therapy session with three other participants (Ricardo, Lorenzo and Kiam). Ensure that all participants interact with each other as a group. Make sure everyone introduces themselves by their name at first. " +
-      map_type[modelType] +
-      ' YOU MUST SET "intervene" to false EXCEPT ONLY ON THESE SITUATIONS:\n- When you are starting the session or the session is within 15 minutes to the end.\n- If a participant is not allowing others to speak or using inappropriate language or a participant has been inactive for a while.\n- If the discussion is going in circles and no progress is being made.\n\nAlways respond in JSON format. When you don\'t want to intervene send the following: {"response":"","intervene":false}. Otherwise when you need to talk put your dialog in the "response" field and set "intervene" to true. When the conversation is ending, say goodbye and thank the participants. Start the session after receiving this message. ',
+      "For the rest of the conversation, you are the moderator in a group therapy session with three other participants. Ensure that all participants interact with each other as a group. " +
+      'Always respond in JSON format. When you want to be silent send the following: {"response":"","intervene":false}. Otherwise when you need to talk put your dialog in the "response" field and set "intervene" to true. ' +
+      role_behaviors[modelType] +
+      'YOU MUST INTERVENE ONLY ON THESE SITUATIONS: 1: When you are starting the session or the session is within 15 minutes to the end. 2: If a participant is not allowing others to speak or using inappropriate language or a participant has been inactive for a while. 3: If the discussion is going in circles and no progress is being made. ' +
+      'When the conversation is ending, say goodbye and thank the participants. Start the session now and make sure everyone introduces themselves by their name at first.',
   };
   
   const result = await client.chat.completions.create({
     messages: [
       systemPrompt,
       ...conversationHistory,
-      { role: "user", content: speakerId + " " + newPrompt },
+      { role: "user", content: speakerId + ": " + newPrompt },
     ],
-    temperature: 0.5,
+    temperature: role_temperatures[modelType],
     max_completion_tokens: 150,
     model: process.env.REACT_APP_OPENAI_MODEL,
   });
