@@ -8,7 +8,7 @@ import HandIcon from "../assets/stop-hand.svg";
 
 if (env === "production") {
   var { getModeratorResponse } = require("../services/LLM/llm_model");
-  var { listener, stopListener } = require("../services/speechToText/listener");
+  var { listener, stopListener, endSession } = require("../services/speechToText/listener");
 }
 
 function App() {
@@ -125,6 +125,7 @@ function App() {
               <button
                 className="terminate-button"
                 onClick={() => {
+                  endSession();
                   window.speechSynthesis.cancel();
                   document
                     .querySelector(".App-header")

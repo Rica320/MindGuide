@@ -112,7 +112,6 @@ export async function listener(modelType) {
 
   // Connect callbacks to conversation transcriber events
   conversationTranscriber.canceled = onRecognitionCanceled;
-  conversationTranscriber.sessionStopped = onSessionStopped;
   conversationTranscriber.sessionStarted = onSessionStarted;
   conversationTranscriber.transcribed = onTranscribed;
   conversationTranscriber.transcribing = onTranscribing;
@@ -142,11 +141,6 @@ function silenceDetected() {
   speak("", "No one has spoken for 10 seconds, intervene to reactivate the conversation by calling back a participant who has spoken little.");
 }
 
-function endSession() {
-  console.log("Session's time is up!");
-  speak("", "The session's time has ended. Thank the participants and say goodbye.")
-}
-
 function speak(speakerId, text, modelType) {
   if(!speaking){
   // speak
@@ -168,6 +162,11 @@ function speak(speakerId, text, modelType) {
       //speakText(response);
     }
   );}
+}
+
+export function endSession() {
+  console.log("Session's time is up!");
+  speak("", "The session's time has ended. Thank the participants and say goodbye.")
 }
 
 export async function stopListener() {
