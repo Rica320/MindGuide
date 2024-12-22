@@ -28,7 +28,7 @@ function App() {
       } else {
         // send message to start conversation
         let selectedModel = document.getElementById("model-select").value;
-        getModeratorResponse("user", "start conversation", selectedModel).then(
+        getModeratorResponse('(Start the session now and make sure everyone introduces themselves by their name at first)', selectedModel).then(
           (response) => {
             log.info("Moderator: ", response);
             // speakText(response);

@@ -7,9 +7,10 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const { getModeratorResponse } = require("../LLM/llm_model");
 let speaking = false;
 
-// variable to monitor the silence
+// timers to monitor the silence and session's duration
 let silenceTimer;
-
+let sessionTimer;
+const sessionDuration = 15 * 60 * 1000;
 
 // Get environment variables for Speech API key and region
 const speechKey = process.env.REACT_APP_MICROSOFT_SPEECH_KEY;
@@ -47,7 +48,10 @@ export async function listener(modelType) {
   // Callback Functions
   const onRecognitionCanceled = (_, evt) => console.log("Canceled event");
   const onSessionStopped = (_, evt) => console.log("SessionStopped event");
-  const onSessionStarted = (_, evt) => console.log("SessionStarted event");
+  const onSessionStarted = (_, evt) => {
+    console.log("SessionStarted event");
+    sessionTimer = setTimeout(() => endSession(), sessionDuration)
+  };
 
   const onTranscribed = (s, evt) => {
     if (
@@ -99,9 +103,6 @@ export async function listener(modelType) {
       console.log("\nTRANSCRIBE DISABLED...Moderator speaking:");
       return;
     }
-    console.log("TRANSCRIBING:");
-    console.log(`\tText=${evt.result.text}`);
-    console.log(`\tSpeaker ID=${evt.result.speakerId}`);
   };
 
   const stopCallback = (s, evt) => {
@@ -138,10 +139,12 @@ export async function listener(modelType) {
 
 function silenceDetected() {
   console.log("Silence detected! No activity for 10 seconds.");
-  speak(
-    "",
-    "No one has spoken for 10 seconds, considering what has been said you intervene to reactivate the conversation by calling back a participant who has spoken little"
-  );
+  speak("", "No one has spoken for 10 seconds, intervene to reactivate the conversation by calling back a participant who has spoken little.");
+}
+
+function endSession() {
+  console.log("Session's time is up!");
+  speak("", "The session's time has ended. Thank the participants and say goodbye.")
 }
 
 function speak(speakerId, text, modelType) {
@@ -149,10 +152,9 @@ function speak(speakerId, text, modelType) {
   // speak
   speaking = true;
   console.log("Moderator will respond");
-  getModeratorResponse(speakerId, text, modelType).then(
-    // log.info(evt.result.speakerId + ": " + evt.result.text),
+  const newPrompt = speakerId ? `${speakerId}: ${text}` : `(${text})`;
+  getModeratorResponse(newPrompt, modelType).then(
     (response) => {
-      
       // with the browser TTS
       const utterance = new SpeechSynthesisUtterance(response);
       document.querySelector(".App-header").classList.add("blue");

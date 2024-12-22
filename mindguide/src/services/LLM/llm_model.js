@@ -8,8 +8,6 @@ const client = new OpenAI({
 });
 
 let conversationHistory = [];
-let sessionStarted = false;
-let timeStarted = null;
 
 const role_behaviors = {
   moderator:
@@ -17,7 +15,7 @@ const role_behaviors = {
   empathic:
     "Your responses must be empathic and minimal.",
   peer:
-    "Involve others in an active way and make suggestions as a friend.",
+    "Involve others in the conversation actively and make suggestions as a friend.",
 };
 
 const role_temperatures = {
@@ -27,43 +25,32 @@ const role_temperatures = {
 };
 
 // Function to get response with initial instruction only once
-export async function getOpenAIResponse(speakerId, newPrompt, modelType) {
+export async function getOpenAIResponse(newPrompt, modelType) {
   modelType = modelType || "moderator";
   const systemPrompt = {
     role: "system",
     content:
-      "For the rest of the conversation, you are the moderator in a group therapy session with three other participants. Ensure that all participants interact with each other as a group. " +
+      "For the rest of the conversation, you are Emily, the moderator in a group therapy session with three other participants. Ensure that all participants interact with each other as a group. " +
       'Always respond in JSON format. When you want to be silent send the following: {"response":"","intervene":false}. Otherwise when you need to talk put your dialog in the "response" field and set "intervene" to true. ' +
       role_behaviors[modelType] +
-      'YOU MUST INTERVENE ONLY ON THESE SITUATIONS: 1: When you are starting the session or the session is within 15 minutes to the end. 2: If a participant is not allowing others to speak or using inappropriate language or a participant has been inactive for a while. 3: If the discussion is going in circles and no progress is being made. ' +
-      'When the conversation is ending, say goodbye and thank the participants. Start the session now and make sure everyone introduces themselves by their name at first.',
+      'YOU MUST INTERVENE ONLY ON THESE SITUATIONS: 1: When you are starting the session or the session is within 15 minutes to the end. 2: If a participant is not allowing others to speak or using inappropriate language or a participant has been inactive for a while. 3: If the discussion is going in circles and no progress is being made.',
   };
   
   const result = await client.chat.completions.create({
     messages: [
       systemPrompt,
       ...conversationHistory,
-      { role: "user", content: speakerId + ": " + newPrompt },
+      { role: "user", content: newPrompt },
     ],
     temperature: role_temperatures[modelType],
     max_completion_tokens: 150,
     model: process.env.REACT_APP_OPENAI_MODEL,
   });
 
-  if (sessionStarted) {
-    if (timeStarted === null) timeStarted = new Date().getTime();
-    const currentTime = new Date().getTime();
-    const elapsedTime = currentTime - timeStarted;
-    const minutes = Math.floor(elapsedTime / 60000);
-    const seconds = Math.floor((elapsedTime % 60000) / 1000);
-    let timeStamp = `[${minutes}:${seconds}] `;
-    conversationHistory.push({
-      role: "user",
-      content: timeStamp + speakerId + ": " + newPrompt,
-    }); // Add the user prompt to the history ... change user id to the speaker id
-  } else {
-    sessionStarted = true;
-  }
+  conversationHistory.push({
+    role: "user",
+    content: newPrompt,
+  });
 
   console.log("LLM response:", result.choices[0].message.content)
   let response = "";
@@ -95,10 +82,9 @@ export async function getOpenAIResponse(speakerId, newPrompt, modelType) {
   return "";
 }
 
-export async function getModeratorResponse(speakerId, speechText, modelType) {
+export async function getModeratorResponse(speechText, modelType) {
   console.log("Moderator Responding");
-  log.info(speakerId + ": " + speechText);
-  const response = await getOpenAIResponse(speakerId, speechText, modelType);
+  const response = await getOpenAIResponse(speechText, modelType);
   log.info("Moderator: ", response);
 
   return response;
