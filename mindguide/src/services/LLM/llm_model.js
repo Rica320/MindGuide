@@ -7,16 +7,11 @@ const client = new OpenAI({
   dangerouslyAllowBrowser: true,
 });
 
+let participantsNumber = 1;
 let conversationHistory = [];
 
-const role_behaviors = {
-  moderator:
-    "Your responses must be short and don't express any opinions or suggestion.",
-  empathic:
-    "Your responses must be empathic and minimal.",
-  peer:
-    "Involve others in the conversation actively and make suggestions as a friend.",
-};
+
+
 
 const role_temperatures = {
   moderator: 0.2,
@@ -25,15 +20,27 @@ const role_temperatures = {
 };
 
 // Function to get response with initial instruction only once
-export async function getOpenAIResponse(newPrompt, modelType, numberParticipants) {
+export async function getOpenAIResponse(newPrompt, modelType, participantsNumber) {
+
+  let role_behaviors = {
+    moderator:
+    "For the rest of the conversation you are Emily, the moderator in a group therapy session with " + participantsNumber + " other participants. Ensure that all participants interact with each other as a group.\n\nYour job is just to get the conversation going properly, therefore your responses must be very short and foster group dynamics and help all participants to have the opportunity to express their thoughts.\nYou must not give your personal opinions or suggestions to participants.\nMake sure everyone introduces themselves by their name at first.", 
+    empathic:
+      "For the rest of the conversation you are Emily, an empathic listener who listens to the problems of " + participantsNumber + " other participants in the conversation.\nYour tasks are\:\n- Allow participants to talk as much as possible to vent.\n- Make sure everyone is talking.\n- Help participants interact with each other.\nYou must interact with an understanding, calm and empathetic attitude, making participants feel heard, understood and in a safe environment.\nYou must keep your answers very brief and must not give suggestions or personal opinions.\nMake sure everyone introduces themselves by their name at first.",
+    peer:
+      "For the rest of the conversation you are Emily, a participant within a conversation with your " + participantsNumber + " friends who are discussing their problems.\nYou have to interact as one of their peers, so be friendly and inclined to help them.\nMake sure everyone has a chance to talk and interact with each other.\nMake sure everyone introduces themselves by their name at first.",
+  };
+
   modelType = modelType || "moderator";
   const systemPrompt = {
     role: "system",
     content:
-      "For the rest of the conversation, you are Emily, the moderator in a group therapy session with " +numberParticipants+ " other participants. Ensure that all participants interact with each other as a group. " +
-      'Always respond in JSON format. When you want to be silent send the following: {"response":"","intervene":false}. Otherwise when you need to talk put your dialog in the "response" field and set "intervene" to true. ' +
       role_behaviors[modelType] +
-      'YOU MUST INTERVENE ONLY ON THESE SITUATIONS: 1: When you are starting the session or the session is within 15 minutes to the end. 2: If a participant is not allowing others to speak or using inappropriate language or a participant has been inactive for a while. 3: If the discussion is going in circles and no progress is being made.',
+      "YOU MUST SET \"intervene\" to false EXCEPT ONLY ON THESE SITUATIONS\:\n"+
+      "- When you are starting the session or the session is within 15 minutes to the end.\n"+
+      "-  If a participant is not allowing others to speak or using inappropriate language or a participant has been inactive for a while.\n"+
+      "-  If the discussion is going in circles and no progress is being made.\n\n"+
+      "Always respond in JSON format. When you don't want to intervene send the following: {\"response\":\"\",\"intervene\":false}. Otherwise when you need to talk put your dialog in the \"response\" field and set \"intervene\" to true. When the conversation is ending, say goodbye and thank the participants. Start the session after receiving this message.",
   };
   
   console.log("LLM request:", systemPrompt)
