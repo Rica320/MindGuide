@@ -27,7 +27,7 @@ if (!speechKey || !serviceRegion) {
   process.exit(1);
 }
 
-export async function listener(modelType) {
+export async function listener(modelType, numberParticipants) {
   log.info("Starting listener");
   const speechConfig = sdk.SpeechConfig.fromSubscription(
     speechKey,
@@ -56,12 +56,12 @@ export async function listener(modelType) {
   const onTranscribed = (s, evt) => {
     if (
       // As moderator speaks always as a first speaker, he is Guest-1
-      evt.result.speakerId === "Guest-1" ||
+      //evt.result.speakerId === "Guest-1" ||
       evt.result.speakerId === "Unknown"
     ) {
       console.log(
         "\nDisable transcribing as Moderator is speaking:" +
-          evt.result.speakerId
+        evt.result.speakerId
       );
       return;
     }
@@ -79,7 +79,7 @@ export async function listener(modelType) {
       }
 
       // speak
-      speak(evt.result.speakerId, evt.result.text, modelType);
+      speak(evt.result.speakerId, evt.result.text, modelType, numberParticipants);
     } else if (evt.result.reason === sdk.ResultReason.NoMatch) {
       console.log(
         `\tNOMATCH: Speech could not be TRANSCRIBED: ${evt.result.noMatchDetails}`
@@ -97,7 +97,7 @@ export async function listener(modelType) {
 
     // if the moderator is speaking the transcription is disabled
     if (
-      evt.result.speakerId === "Guest-1" ||
+      //evt.result.speakerId === "Guest-1" ||
       evt.result.speakerId === "Unknown"
     ) {
       console.log("\nTRANSCRIBE DISABLED...Moderator speaking:");
@@ -141,29 +141,39 @@ function silenceDetected() {
   speak("", "No one has spoken for 10 seconds, intervene to reactivate the conversation by calling back a participant who has spoken little.");
 }
 
-function speak(speakerId, text, modelType) {
-  if(!speaking){
-  // speak
-  speaking = true;
-  console.log("Moderator will respond");
-  const newPrompt = speakerId ? `${speakerId}: ${text}` : `(${text})`;
-  getModeratorResponse(newPrompt, modelType).then(
-    (response) => {
-      if (!usePolly) {
-        // with the browser TTS
-        const utterance = new SpeechSynthesisUtterance(response);
-        document.querySelector(".App-header").classList.add("blue");
-        utterance.onend = () => {
-          speaking = false;
-          document.querySelector(".App-header").classList.remove("blue");
-        };
-        window.speechSynthesis.speak(utterance);
-      } else {
-        // with polly
-        speakText(response);
+function speak(speakerId, text, modelType, numberParticipants) {
+  if (!speaking) {
+    // speak
+    speaking = true;
+    clearTimeout(silenceTimer);
+    console.log("Moderator will respond");
+    const newPrompt = speakerId ? `${speakerId}: ${text}` : `(${text})`;
+    getModeratorResponse(newPrompt, modelType, numberParticipants).then(
+      (response) => {
+        if (!usePolly) {
+          // with the browser TTS
+          const utterance = new SpeechSynthesisUtterance(response);
+          document.querySelector(".App-header").classList.add("blue");
+          utterance.onend = () => {
+            speaking = false;
+            document.querySelector(".App-header").classList.remove("blue");
+            silenceTimer = setTimeout(() => {
+              silenceDetected();
+            }, 10000); // 10 second
+          };
+          window.speechSynthesis.speak(utterance);
+        } else {
+          // with polly
+          speakText(response).then(() => {
+            speaking = false;
+            silenceTimer = setTimeout(() => {
+              silenceDetected();
+            }, 10000); // 10 second
+          });
+        }
       }
-    }
-  );}
+    );
+  }
 }
 
 export function endSession() {

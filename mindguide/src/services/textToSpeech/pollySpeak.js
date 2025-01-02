@@ -14,47 +14,49 @@ if (usePolly) {
     Polly = new AWS.Polly();
 }
 
- export function speakText(text, outputFormat = 'mp3', voiceId = 'Ruth', engine='generative') {
+export function speakText(text, outputFormat = 'mp3', voiceId = 'Ruth', engine='generative') {
     if (!usePolly) {
         console.log("polly is not available");
         return;
     }
 
-    //const audioRef = useRef(null);  // Define the audioRef here
+    return new Promise((resolve, reject) => {
+        const params = {
+            'Text': text,
+            'OutputFormat': outputFormat,
+            'VoiceId': voiceId,
+            'Engine': engine
+        };
 
-     let params = {
-         'Text': text,
-         'OutputFormat': outputFormat,
-         'VoiceId': voiceId,
-         'Engine': engine
-     }
+        Polly.synthesizeSpeech(params, (err, data) => {
+            if (err) {
+                console.log("Error detected: " + err.code + "\n" + err.stack + "\n" + err.message);
+                reject(err);
+            } else if (data && data.AudioStream) {
+                // Converti il buffer dello stream in un Blob
+                const audioBlob = new Blob([data.AudioStream], { type: 'audio/mpeg' });
 
-     Polly.synthesizeSpeech(params, (err, data) => {
-         if (err) {
-             console.log("Error detected: " + err.code + "\n" + err.stack + "\n" + err.message)
-         } else if (data && data.AudioStream) {
-            
-            // Converti il buffer dello stream in un Blob
-            const audioBlob = new Blob([data.AudioStream], { type: 'audio/mpeg' });
+                // Crea un URL temporaneo per il Blob
+                const audioUrl = URL.createObjectURL(audioBlob);
 
-            // Crea un URL temporaneo per il Blob
-            const audioUrl = URL.createObjectURL(audioBlob);
+                // Riproduci l'audio usando l'oggetto Audio
+                const audio = new Audio(audioUrl);
+                audio.play();
 
-            // Riproduci l'audio usando l'oggetto Audio
-            const audio = new Audio(audioUrl);
-            audio.play();
+                // Rilascia l'URL temporaneo al termine dell'audio per risparmiare memoria
+                audio.onended = () => {
+                    URL.revokeObjectURL(audioUrl);
+                    resolve(); // Risolvi la promessa quando l'audio termina
+                };
 
-            // Rilascia l'URL temporaneo al termine dell'audio per risparmiare memoria
-            audio.onended = () => {
-                URL.revokeObjectURL(audioUrl);
-            };
-                
-            //###
-            // var bufferStream = new Stream.PassThrough()
-            // bufferStream.end(data.AudioStream)
-            // bufferStream.pipe(Player)
-                
-        }
-         
-     })
- }
+                // In caso di errore durante la riproduzione dell'audio
+                audio.onerror = (error) => {
+                    URL.revokeObjectURL(audioUrl);
+                    reject(error); // Rifiuta la promessa in caso di errore
+                };
+            } else {
+                reject(new Error("No audio stream received from Polly"));
+            }
+        });
+    });
+}

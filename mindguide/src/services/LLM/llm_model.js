@@ -25,17 +25,18 @@ const role_temperatures = {
 };
 
 // Function to get response with initial instruction only once
-export async function getOpenAIResponse(newPrompt, modelType) {
+export async function getOpenAIResponse(newPrompt, modelType, numberParticipants) {
   modelType = modelType || "moderator";
   const systemPrompt = {
     role: "system",
     content:
-      "For the rest of the conversation, you are Emily, the moderator in a group therapy session with three other participants. Ensure that all participants interact with each other as a group. " +
+      "For the rest of the conversation, you are Emily, the moderator in a group therapy session with " +numberParticipants+ " other participants. Ensure that all participants interact with each other as a group. " +
       'Always respond in JSON format. When you want to be silent send the following: {"response":"","intervene":false}. Otherwise when you need to talk put your dialog in the "response" field and set "intervene" to true. ' +
       role_behaviors[modelType] +
       'YOU MUST INTERVENE ONLY ON THESE SITUATIONS: 1: When you are starting the session or the session is within 15 minutes to the end. 2: If a participant is not allowing others to speak or using inappropriate language or a participant has been inactive for a while. 3: If the discussion is going in circles and no progress is being made.',
   };
   
+  console.log("LLM request:", systemPrompt)
   const result = await client.chat.completions.create({
     messages: [
       systemPrompt,
@@ -83,9 +84,9 @@ export async function getOpenAIResponse(newPrompt, modelType) {
   return "";
 }
 
-export async function getModeratorResponse(speechText, modelType) {
+export async function getModeratorResponse(speechText, modelType, numberParticipants) {
   console.log("Moderator Responding");
-  const response = await getOpenAIResponse(speechText, modelType);
+  const response = await getOpenAIResponse(speechText, modelType, numberParticipants);
   log.info("Moderator: ", response);
 
   return response;

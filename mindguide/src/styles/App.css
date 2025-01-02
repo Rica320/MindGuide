@@ -338,20 +338,29 @@
 
 .cute-select-container {
   display: flex;
-  align-items: center;
   gap: 12px;
   padding: 8px;
 }
 
 .cute-select-container label {
+  display: flex;
   font-size: 14px;
   color: #6b7280;
   font-weight: 500;
 }
 
+.select-container {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Adjust the gap as needed */
+}
+
 .select-wrapper {
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
+
 
 .select-wrapper::after {
   content: "▼";
@@ -359,8 +368,7 @@
   color: #6b7280;
   position: absolute;
   right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 53%;
   pointer-events: none;
 }
 

@@ -30,7 +30,8 @@ function App() {
       } else {
         // send message to start conversation
         let selectedModel = document.getElementById("model-select").value;
-        getModeratorResponse('(Start the session now and make sure everyone introduces themselves by their name at first)', selectedModel).then(
+        let selectedParticipants = document.getElementById("participant-select").value;
+        getModeratorResponse('(Start the session now and make sure everyone introduces themselves by their name at first)', selectedModel, selectedParticipants).then(
           (response) => {
             log.info("Moderator: ", response);
 
@@ -46,7 +47,7 @@ function App() {
             }
           }
         );
-        listener(selectedModel);
+        listener(selectedModel, selectedParticipants);
       }
       setIsListening(!isListening);
     } else {
@@ -60,22 +61,39 @@ function App() {
         <header className="App-header">
           <div className="cute-select-container">
             {/* role selector */}
-            { isListening ? (<div> </div>) : (<div>
-              <label htmlFor="model-select">MindGuide type:</label>
-              <div className="select-wrapper">
-                <select
-                  id="model-select"
-                  onChange={(e) => {
-                    const selectedModel = e.target.value;
-                    log.info("Selected Model: ", selectedModel);
-                  }}
-                >
-                  <option value="moderator">Moderator</option>
-                  <option value="empathic">Empathic</option>
-                  <option value="peer">Peer</option>
-                </select>
+            {isListening ? (<div> </div>) : (<div>
+              <div className="select-container">
+                <div className="select-wrapper">
+                  <label htmlFor="model-select">MindGuide type:</label>
+                  <select
+                    id="model-select"
+                    onChange={(e) => {
+                      const selectedModel = e.target.value;
+                      log.info("Selected Model: ", selectedModel);
+                    }}
+                  >
+                    <option value="moderator">Moderator</option>
+                    <option value="empathic">Empathic</option>
+                    <option value="peer">Peer</option>
+                  </select>
+                </div>
+                <div className="select-wrapper">
+                  <label htmlFor="participant-select">Number of Participants:</label>
+                  <select
+                    id="participant-select"
+                    onChange={(e) => {
+                      const selectedParticipants = e.target.value;
+                      log.info("Selected Participants: ", selectedParticipants);
+                    }}
+                  >
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </select>
+                </div>
               </div>
-              </div>
+            </div>
             )}
           </div>
           <div
