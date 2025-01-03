@@ -7,7 +7,6 @@ const client = new OpenAI({
   dangerouslyAllowBrowser: true,
 });
 
-let participantsNumber = 1;
 let conversationHistory = [];
 
 
@@ -20,15 +19,15 @@ const role_temperatures = {
 };
 
 // Function to get response with initial instruction only once
-export async function getOpenAIResponse(newPrompt, modelType, participantsNumber) {
+export async function getOpenAIResponse(newPrompt, modelType, participantsNumber, names) {
 
   let role_behaviors = {
     moderator:
-    "For the rest of the conversation you are Emily, the moderator in a group therapy session with " + participantsNumber + " other participants. Ensure that all participants interact with each other as a group.\n\nYour job is just to get the conversation going properly, therefore your responses must be very short and foster group dynamics and help all participants to have the opportunity to express their thoughts.\nYou must not give your personal opinions or suggestions to participants.\nMake sure everyone introduces themselves by their name at first.", 
+    "For the rest of the conversation you are Emily, the moderator in a group therapy session with " + participantsNumber + " other participants ( " +names+ " ). Ensure that all participants interact with each other as a group.\n\nYour job is just to get the conversation going properly, therefore your responses must be very short and foster group dynamics and help all participants to have the opportunity to express their thoughts.\nYou must not give your personal opinions or suggestions to participants.\nMake sure everyone introduces themselves by their name at first.", 
     empathic:
-      "For the rest of the conversation you are Emily, an empathic listener who listens to the problems of " + participantsNumber + " other participants in the conversation.\nYour tasks are\:\n- Allow participants to talk as much as possible to vent.\n- Make sure everyone is talking.\n- Help participants interact with each other.\nYou must interact with an understanding, calm and empathetic attitude, making participants feel heard, understood and in a safe environment.\nYou must keep your answers very brief and must not give suggestions or personal opinions.\nMake sure everyone introduces themselves by their name at first.",
+      "For the rest of the conversation you are Emily, an empathic listener who listens to the problems of " + participantsNumber + " other participants ( " +names+ " ) in the conversation.\nYour tasks are\:\n- Allow participants to talk as much as possible to vent.\n- Make sure everyone is talking.\n- Help participants interact with each other.\nYou must interact with an understanding, calm and empathetic attitude, making participants feel heard, understood and in a safe environment.\nYou must keep your answers very brief and must not give suggestions or personal opinions.\nMake sure everyone introduces themselves by their name at first.",
     peer:
-      "For the rest of the conversation you are Emily, a participant within a conversation with your " + participantsNumber + " friends who are discussing their problems.\nYou have to interact as one of their peers, so be friendly and inclined to help them.\nMake sure everyone has a chance to talk and interact with each other.\nMake sure everyone introduces themselves by their name at first.",
+      "For the rest of the conversation you are Emily, a participant within a conversation with your " + participantsNumber + " friends ( " +names+ " ) who are discussing their problems.\nYou have to interact as one of their peers, so be friendly and inclined to help them.\nMake sure everyone has a chance to talk and interact with each other.\nMake sure everyone introduces themselves by their name at first.",
   };
 
   modelType = modelType || "moderator";
@@ -91,9 +90,9 @@ export async function getOpenAIResponse(newPrompt, modelType, participantsNumber
   return "";
 }
 
-export async function getModeratorResponse(speechText, modelType, numberParticipants) {
+export async function getModeratorResponse(speechText, modelType, numberParticipants, names) {
   console.log("Moderator Responding");
-  const response = await getOpenAIResponse(speechText, modelType, numberParticipants);
+  const response = await getOpenAIResponse(speechText, modelType, numberParticipants, names);
   log.info("Moderator: ", response);
 
   return response;

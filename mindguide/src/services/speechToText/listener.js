@@ -27,7 +27,7 @@ if (!speechKey || !serviceRegion) {
   process.exit(1);
 }
 
-export async function listener(modelType, numberParticipants) {
+export async function listener(modelType, numberParticipants, names) {
   log.info("Starting listener");
   const speechConfig = sdk.SpeechConfig.fromSubscription(
     speechKey,
@@ -79,7 +79,7 @@ export async function listener(modelType, numberParticipants) {
       }
 
       // speak
-      speak(evt.result.speakerId, evt.result.text, modelType, numberParticipants);
+      speak(evt.result.speakerId, evt.result.text, modelType, numberParticipants, names);
     } else if (evt.result.reason === sdk.ResultReason.NoMatch) {
       console.log(
         `\tNOMATCH: Speech could not be TRANSCRIBED: ${evt.result.noMatchDetails}`
@@ -141,14 +141,14 @@ function silenceDetected() {
   speak("", "No one has spoken for 10 seconds, intervene to reactivate the conversation by calling back a participant who has spoken little.");
 }
 
-function speak(speakerId, text, modelType, numberParticipants) {
+function speak(speakerId, text, modelType, numberParticipants, names) {
   if (!speaking) {
     // speak
     speaking = true;
     clearTimeout(silenceTimer);
     console.log("Moderator will respond");
     const newPrompt = speakerId ? `${speakerId}: ${text}` : `(${text})`;
-    getModeratorResponse(newPrompt, modelType, numberParticipants).then(
+    getModeratorResponse(newPrompt, modelType, numberParticipants, names).then(
       (response) => {
         if (!usePolly) {
           // with the browser TTS

@@ -1,6 +1,6 @@
+import React, { useEffect, useState } from "react";
 import env from "../config";
 import "../styles/App.css";
-import { useEffect, useState } from "react";
 import VoiceRecognition from "../components/VoiceRecognition";
 import log from "../utils/logger";
 import HandIcon from "../assets/stop-hand.svg";
@@ -17,12 +17,25 @@ function App() {
   const [isListening, setIsListening] = useState(false);
   const [svgContent, setSvgContent] = useState("");
   const [isHovered, setIsHovered] = useState(false);
+  const [numberParticipants, setNumberParticipants] = useState(2);
+  const [participantNames, setParticipantNames] = useState([]);
 
   useEffect(() => {
     fetch("/planet_svg.html")
       .then((response) => response.text())
       .then((data) => setSvgContent(data));
   }, []);
+
+  useEffect(() => {
+    setParticipantNames(Array(numberParticipants).fill(""));
+  }, [numberParticipants]);
+
+  const handleParticipantNameChange = (index, value) => {
+    const newNames = [...participantNames];
+    newNames[index] = value;
+    setParticipantNames(newNames);
+  };
+
   const toggleConversation = () => {
     if (env === "production") {
       if (isListening) {
@@ -31,23 +44,20 @@ function App() {
         // send message to start conversation
         let selectedModel = document.getElementById("model-select").value;
         let selectedParticipants = document.getElementById("participant-select").value;
-        getModeratorResponse('(Start the session now and make sure everyone introduces themselves by their name at first)', selectedModel, selectedParticipants).then(
+        getModeratorResponse('(Start the session now and make sure everyone introduces themselves by their name at first)', selectedModel, selectedParticipants, participantNames).then(
           (response) => {
             log.info("Moderator: ", response);
 
             if (!usePolly) {
               // with browser speech synthesis
-              const utterance = new SpeechSynthesisUtterance(response);
-              document.querySelector(".App-header").classList.add("blue");
-              utterance.onend = () => document.querySelector(".App-header").classList.remove("blue");
-              window.speechSynthesis.speak(utterance);
+              window.speechSynthesis.speak(new SpeechSynthesisUtterance(response));
             } else {
               // with polly
               speakText(response);
             }
           }
         );
-        listener(selectedModel, selectedParticipants);
+        listener(selectedModel, selectedParticipants, participantNames);
       }
       setIsListening(!isListening);
     } else {
@@ -81,16 +91,27 @@ function App() {
                   <label htmlFor="participant-select">Number of Participants:</label>
                   <select
                     id="participant-select"
-                    onChange={(e) => {
-                      const selectedParticipants = e.target.value;
-                      log.info("Selected Participants: ", selectedParticipants);
-                    }}
+                    value={numberParticipants}
+                    onChange={(e) => setNumberParticipants(parseInt(e.target.value))}
                   >
                     <option value="2">2</option>
                     <option value="3">3</option>
                     <option value="4">4</option>
                     <option value="5">5</option>
                   </select>
+                </div>
+                <div className="participant-names">
+                  {Array.from({ length: numberParticipants }).map((_, index) => (
+                    <div key={index} className="participant-name">
+                      <label htmlFor={`participant-name-${index}`}>Participant {index + 1} Name:</label>
+                      <input
+                        type="text"
+                        id={`participant-name-${index}`}
+                        value={participantNames[index] || ""}
+                        onChange={(e) => handleParticipantNameChange(index, e.target.value)}
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
