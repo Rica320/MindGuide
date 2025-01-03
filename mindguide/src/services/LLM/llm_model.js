@@ -42,7 +42,6 @@ export async function getOpenAIResponse(newPrompt, modelType, participantsNumber
       "Always respond in JSON format. When you don't want to intervene send the following: {\"response\":\"\",\"intervene\":false}. Otherwise when you need to talk put your dialog in the \"response\" field and set \"intervene\" to true. When the conversation is ending, say goodbye and thank the participants. Start the session after receiving this message.",
   };
   
-  console.log("LLM request:", systemPrompt)
   const result = await client.chat.completions.create({
     messages: [
       systemPrompt,
@@ -91,7 +90,6 @@ export async function getOpenAIResponse(newPrompt, modelType, participantsNumber
 }
 
 export async function getModeratorResponse(speechText, modelType, numberParticipants, names) {
-  console.log("Moderator Responding");
   const response = await getOpenAIResponse(speechText, modelType, numberParticipants, names);
   log.info("Moderator: ", response);
 

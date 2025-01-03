@@ -93,7 +93,8 @@ export async function listener(modelType, numberParticipants, names) {
     //Set a new  timer
     silenceTimer = setTimeout(() => {
       silenceDetected();
-    }, 10000); // 10 second
+    }, 15000); // 15 second
+    console.log("Reset timer on transcribing");
 
     // if the moderator is speaking the transcription is disabled
     if (
@@ -107,6 +108,8 @@ export async function listener(modelType, numberParticipants, names) {
 
   const stopCallback = (s, evt) => {
     console.log(`CLOSING on ${evt}`);
+    clearTimeout(silenceTimer);
+    console.log("Stopping timer");
     transcribingStop = true;
   };
 
@@ -138,7 +141,9 @@ export async function listener(modelType, numberParticipants, names) {
 
 function silenceDetected() {
   console.log("Silence detected! No activity for 10 seconds.");
-  speak("", "No one has spoken for 10 seconds, intervene to reactivate the conversation by calling back a participant who has spoken little.");
+  if(!transcribingStop){
+    speak("", "No one has spoken for 15 seconds, intervene to reactivate the conversation.");
+  }
 }
 
 function speak(speakerId, text, modelType, numberParticipants, names) {
@@ -146,7 +151,7 @@ function speak(speakerId, text, modelType, numberParticipants, names) {
     // speak
     speaking = true;
     clearTimeout(silenceTimer);
-    console.log("Moderator will respond");
+    console.log("Stopping timer for speaking");
     const newPrompt = speakerId ? `${speakerId}: ${text}` : `(${text})`;
     getModeratorResponse(newPrompt, modelType, numberParticipants, names).then(
       (response) => {
@@ -157,18 +162,22 @@ function speak(speakerId, text, modelType, numberParticipants, names) {
           utterance.onend = () => {
             speaking = false;
             document.querySelector(".App-header").classList.remove("blue");
+            clearTimeout(silenceTimer);
             silenceTimer = setTimeout(() => {
               silenceDetected();
-            }, 10000); // 10 second
+            }, 15000); // 15 second
+            console.log("Starting timer for speaking");
           };
           window.speechSynthesis.speak(utterance);
         } else {
           // with polly
           speakText(response).then(() => {
             speaking = false;
+            clearTimeout(silenceTimer);
             silenceTimer = setTimeout(() => {
               silenceDetected();
-            }, 10000); // 10 second
+            }, 15000); // 15 second
+            console.log("Starting timer for speaking");
           });
         }
       }
@@ -177,14 +186,17 @@ function speak(speakerId, text, modelType, numberParticipants, names) {
 }
 
 export function endSession() {
+  clearTimeout(silenceTimer);
+  console.log("Stopping timer");
   console.log("Session's time is up!");
   speak("", "The session's time has ended. Thank the participants and say goodbye.")
 }
 
 export async function stopListener() {
+  console.log("The session is stopping...");
   transcribingStop = true;
   clearTimeout(silenceTimer);
-
+  console.log("Stopping timer");
   if (!conversationTranscriber) {
     return;
   }

@@ -19,7 +19,7 @@ const originalFactory = log.methodFactory;
 log.methodFactory = (methodName, logLevel, loggerName) => {
   const rawMethod = originalFactory(methodName, logLevel, loggerName);
   return (...messages) => {
-    rawMethod(...messages);
+    //rawMethod(...messages);
     sendLogToServer(methodName, messages.join(" "));
   };
 };
