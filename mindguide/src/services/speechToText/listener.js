@@ -111,6 +111,8 @@ export async function listener(modelType, numberParticipants, names) {
     clearTimeout(silenceTimer);
     console.log("Stopping timer");
     transcribingStop = true;
+    speak("", "The users stopped the session. Thank the participants and say goodbye.")
+
   };
 
   // Connect callbacks to conversation transcriber events
