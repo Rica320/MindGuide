@@ -173,8 +173,10 @@ function speak(speakerId, text, modelType, numberParticipants, names) {
           window.speechSynthesis.speak(utterance);
         } else {
           // with polly
+          document.querySelector(".App-header").classList.add("blue");
           speakText(response).then(() => {
             speaking = false;
+            document.querySelector(".App-header").classList.remove("blue");
             clearTimeout(silenceTimer);
             silenceTimer = setTimeout(() => {
               silenceDetected();
