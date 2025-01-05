@@ -9,8 +9,6 @@ let speaking = false;
 
 // timers to monitor the silence and session's duration
 let silenceTimer;
-let sessionTimer;
-const sessionDuration = 15 * 60 * 1000;
 
 // Get environment variables for Speech API key and region
 const speechKey = process.env.REACT_APP_MICROSOFT_SPEECH_KEY;
@@ -50,7 +48,6 @@ export async function listener(modelType, numberParticipants, names) {
   const onSessionStopped = (_, evt) => console.log("SessionStopped event");
   const onSessionStarted = (_, evt) => {
     console.log("SessionStarted event");
-    sessionTimer = setTimeout(() => endSession(), sessionDuration)
   };
 
   const onTranscribed = (s, evt) => {
@@ -192,8 +189,6 @@ function speak(speakerId, text, modelType, numberParticipants, names) {
 export function endSession() {
   clearTimeout(silenceTimer);
   console.log("Stopping timer");
-  console.log("Session's time is up!");
-  speak("", "The session's time has ended. Thank the participants and say goodbye.")
 }
 
 export async function stopListener() {
