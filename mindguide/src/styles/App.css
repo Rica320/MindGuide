@@ -427,7 +427,7 @@ select option {
   padding: 0.5rem;
   border: 1px solid #ccc;
   border-radius: 3px;
-  font-size: 0.3rem;
+  font-size: 1rem;
   transition: border-color 0.3s ease;
 }
 
