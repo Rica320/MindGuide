@@ -174,6 +174,7 @@ function App() {
                 onClick={toggleConversation}
                 className="chat-button pulse"
                 aria-label="Start conversation"
+                title="Start Session"
               >
                 <svg
                   className="chat-icon"
