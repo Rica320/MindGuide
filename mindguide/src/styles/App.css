@@ -402,3 +402,37 @@ select option {
   background-color: white;
   color: #374151;
 }
+
+.participant-names {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.participant-name {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.participant-name label {
+  font-weight: bold;
+  color: #333;
+}
+
+.participant-name input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 0.3rem;
+  transition: border-color 0.3s ease;
+}
+
+.participant-name input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}

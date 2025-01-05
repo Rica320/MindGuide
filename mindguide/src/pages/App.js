@@ -10,7 +10,11 @@ console.log("use polly = ", usePolly);
 
 if (env === "production") {
   var { getModeratorResponse } = require("../services/LLM/llm_model");
-  var { listener, stopListener, endSession } = require("../services/speechToText/listener");
+  var {
+    listener,
+    stopListener,
+    endSession,
+  } = require("../services/speechToText/listener");
 }
 
 function App() {
@@ -43,20 +47,26 @@ function App() {
       } else {
         // send message to start conversation
         let selectedModel = document.getElementById("model-select").value;
-        let selectedParticipants = document.getElementById("participant-select").value;
-        getModeratorResponse('(Start the session now and make sure everyone introduces themselves by their name at first)', selectedModel, selectedParticipants, participantNames).then(
-          (response) => {
-            log.info("Moderator: ", response);
+        let selectedParticipants =
+          document.getElementById("participant-select").value;
+        getModeratorResponse(
+          "(Start the session now and make sure everyone introduces themselves by their name at first)",
+          selectedModel,
+          selectedParticipants,
+          participantNames
+        ).then((response) => {
+          log.info("Moderator: ", response);
 
-            if (!usePolly) {
-              // with browser speech synthesis
-              window.speechSynthesis.speak(new SpeechSynthesisUtterance(response));
-            } else {
-              // with polly
-              speakText(response);
-            }
+          if (!usePolly) {
+            // with browser speech synthesis
+            window.speechSynthesis.speak(
+              new SpeechSynthesisUtterance(response)
+            );
+          } else {
+            // with polly
+            speakText(response);
           }
-        );
+        });
         listener(selectedModel, selectedParticipants, participantNames);
       }
       setIsListening(!isListening);
@@ -71,55 +81,68 @@ function App() {
         <header className="App-header">
           <div className="cute-select-container">
             {/* role selector */}
-            {isListening ? (<div> </div>) : (<div>
-              <div className="select-container">
-                <div className="select-wrapper">
-                  <label htmlFor="model-select">MindGuide type:</label>
-                  <select
-                    id="model-select"
-                    onChange={(e) => {
-                      const selectedModel = e.target.value;
-                      log.info("Selected Model: ", selectedModel);
-                    }}
-                  >
-                    <option value="moderator">Moderator</option>
-                    <option value="empathic">Empathic</option>
-                    <option value="peer">Peer</option>
-                  </select>
-                </div>
-                <div className="select-wrapper">
-                  <label htmlFor="participant-select">Number of Participants:</label>
-                  <select
-                    id="participant-select"
-                    value={numberParticipants}
-                    onChange={(e) => setNumberParticipants(parseInt(e.target.value))}
-                  >
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                  </select>
-                </div>
-                <div className="participant-names">
-                  {Array.from({ length: numberParticipants }).map((_, index) => (
-                    <div key={index} className="participant-name">
-                      <label htmlFor={`participant-name-${index}`}>Participant {index + 1} Name:</label>
-                      <input
-                        type="text"
-                        id={`participant-name-${index}`}
-                        value={participantNames[index] || ""}
-                        onChange={(e) => handleParticipantNameChange(index, e.target.value)}
-                      />
-                    </div>
-                  ))}
+            {isListening ? (
+              <div> </div>
+            ) : (
+              <div>
+                <div className="select-container">
+                  <div className="select-wrapper">
+                    <label htmlFor="model-select">MindGuide type:</label>
+                    <select
+                      id="model-select"
+                      onChange={(e) => {
+                        const selectedModel = e.target.value;
+                        log.info("Selected Model: ", selectedModel);
+                      }}
+                    >
+                      <option value="moderator">Moderator</option>
+                      <option value="empathic">Empathic</option>
+                      <option value="peer">Peer</option>
+                    </select>
+                  </div>
+                  <div className="select-wrapper">
+                    <label htmlFor="participant-select">
+                      Number of Participants:
+                    </label>
+                    <select
+                      id="participant-select"
+                      value={numberParticipants}
+                      onChange={(e) =>
+                        setNumberParticipants(parseInt(e.target.value))
+                      }
+                    >
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
+                  </div>
+                  <div className="participant-names">
+                    {Array.from({ length: numberParticipants }).map(
+                      (_, index) => (
+                        <div key={index} className="participant-name">
+                          <label htmlFor={`participant-name-${index}`}>
+                            Participant {index + 1} Name:
+                          </label>
+                          <input
+                            type="text"
+                            id={`participant-name-${index}`}
+                            value={participantNames[index] || ""}
+                            onChange={(e) =>
+                              handleParticipantNameChange(index, e.target.value)
+                            }
+                          />
+                        </div>
+                      )
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
             )}
           </div>
           <div
             dangerouslySetInnerHTML={{ __html: svgContent }}
-            style={{ width: "100%", height: "100%" }}
+            style={{ width: "100%", height: "80%" }}
           />
           <div className="button-container">
             {/* Stop Button */}
