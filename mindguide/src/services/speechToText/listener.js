@@ -25,7 +25,7 @@ if (!speechKey || !serviceRegion) {
   process.exit(1);
 }
 
-export async function listener(modelType, numberParticipants, names) {
+export async function listener(modelType, numberParticipants, names, setActiveSpeaker) {
   log.info("Starting listener");
   const speechConfig = sdk.SpeechConfig.fromSubscription(
     speechKey,
@@ -92,7 +92,10 @@ export async function listener(modelType, numberParticipants, names) {
       silenceDetected();
     }, 15000); // 15 second
     console.log("Reset timer on transcribing");
-
+    console.log("\nTRANSCRIBING:");
+    console.log(`\tText=${evt.result.text}`);
+    console.log(`\tSpeaker ID=${evt.result.speakerId}`);
+    
     // if the moderator is speaking the transcription is disabled
     if (
       //evt.result.speakerId === "Guest-1" ||
@@ -101,6 +104,34 @@ export async function listener(modelType, numberParticipants, names) {
       console.log("\nTRANSCRIBE DISABLED...Moderator speaking:");
       return;
     }
+   
+    setActiveSpeaker((prevActiveSpeakers) => {
+      // Add the speaker if it's not already in the list
+      if (!prevActiveSpeakers.includes({id: evt.result.speakerId, speaking: true})) {
+
+         // set all speaking to false
+         prevActiveSpeakers.forEach((speaker) => {
+          speaker.speaking = false;
+        });
+
+        // check if any with same id if so set speaking to true
+        if (prevActiveSpeakers.some((speaker) => speaker.id === evt.result.speakerId)) {
+          return prevActiveSpeakers.map((speaker) => {
+            if (speaker.id === evt.result.speakerId) {
+              speaker.speaking = true;
+            }
+            return speaker;
+          });
+        }
+
+        return [...prevActiveSpeakers, {
+          id: evt.result.speakerId,
+          // name: names[prevActiveSpeakers.length], // this can be wrong ... test it either way for the evaluation
+          speaking: true,
+        }];
+      }
+      return prevActiveSpeakers; // Otherwise, do nothing
+    });
   };
 
   const stopCallback = (s, evt) => {
