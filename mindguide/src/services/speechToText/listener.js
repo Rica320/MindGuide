@@ -141,7 +141,7 @@ export async function listener(modelType, numberParticipants, names, setActiveSp
     clearTimeout(silenceTimer);
     console.log("Stopping timer");
     transcribingStop = true;
-    speak("", "The users stopped the session. Thank the participants and say goodbye. Set intervene to True.")
+    speak("", "The users stopped the session. Thank the participants and say goodbye.")
 
   };
 

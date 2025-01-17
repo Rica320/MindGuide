@@ -48,14 +48,13 @@ export async function getOpenAIResponse(
     role: "system",
     content:
       role_behaviors[modelType] +
-      'YOU MUST SET "intervene" to false EXCEPT ONLY ON THESE SITUATIONS:\n' +
+      'INTERVENE ON THESE SITUATIONS:\n' +
       "- When you are starting the session.\n" +
       "- If someone is using inappropriate language and insulting\n" +
       "-  If a participant is not allowing others to speak or a participant has been inactive for a while.\n" +
       "-  If the discussion is going in circles and no progress is being made.\n\n" +
-      'Always respond in JSON format. When you don\'t want to intervene send the following: {"response":"","intervene":false}. ' +
-      "Please keep in mind that sending intervene as false can be done only 3 consecutive times as maximun." +
-      'Otherwise when you need to talk put your dialog in the "response" field and set "intervene" to true. When the conversation is ending, ' +
+      'When you don\'t want to intervene just send "$" ' +
+      'When the conversation is ending, ' +
       "say goodbye and thank the participants. Start the session after receiving this message.",
   };
 
@@ -76,37 +75,20 @@ export async function getOpenAIResponse(
   });
 
   console.log("LLM response:", result.choices[0].message.content);
-  let response = "";
-  try {
-    response = JSON.parse(result.choices[0].message.content); // Get the response from the result
-  } catch (error) {
-    const cleanedResponse = result.choices[0].message.content.replace(
-      "response:",
-      ""
-    );
-    response = { response: cleanedResponse, intervene: true };
-    console.log("Error: ", error);
-  }
+  let response = result.choices[0].message.content;
 
-  if (!response.response) {
-    response.response = "";
-  }
+  if (response === "$") return  "";
 
   conversationHistory.push({
     role: "assistant",
-    content: JSON.stringify(response),
+    content: response,
   }); // Add the response to the history
 
   // if (conversationHistory.length > 10) {
   //   conversationHistory.shift(); // Remove the oldest moderator response
   //   conversationHistory.shift(); // Remove the oldest user message
   // }
-
-  if (response.intervene) {
-    return response.response;
-  }
-
-  return "";
+  return response;
 }
 
 export async function getModeratorResponse(
