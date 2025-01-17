@@ -95,7 +95,7 @@ export async function listener(modelType, numberParticipants, names, setActiveSp
     console.log("\nTRANSCRIBING:");
     console.log(`\tText=${evt.result.text}`);
     console.log(`\tSpeaker ID=${evt.result.speakerId}`);
-    
+
     // if the moderator is speaking the transcription is disabled
     if (
       //evt.result.speakerId === "Guest-1" ||
@@ -104,13 +104,13 @@ export async function listener(modelType, numberParticipants, names, setActiveSp
       console.log("\nTRANSCRIBE DISABLED...Moderator speaking:");
       return;
     }
-   
+
     setActiveSpeaker((prevActiveSpeakers) => {
       // Add the speaker if it's not already in the list
-      if (!prevActiveSpeakers.includes({id: evt.result.speakerId, speaking: true})) {
+      if (!prevActiveSpeakers.includes({ id: evt.result.speakerId, speaking: true })) {
 
-         // set all speaking to false
-         prevActiveSpeakers.forEach((speaker) => {
+        // set all speaking to false
+        prevActiveSpeakers.forEach((speaker) => {
           speaker.speaking = false;
         });
 
@@ -124,9 +124,11 @@ export async function listener(modelType, numberParticipants, names, setActiveSp
           });
         }
 
+        let indexOfSpeaker = evt.result.speakerId.split("-")[1];
+
         return [...prevActiveSpeakers, {
           id: evt.result.speakerId,
-          // name: names[prevActiveSpeakers.length], // this can be wrong ... test it either way for the evaluation
+          name: parseInt(indexOfSpeaker) === 1 ? "Emily" : names[parseInt(indexOfSpeaker) - 2],
           speaking: true,
         }];
       }
@@ -139,7 +141,7 @@ export async function listener(modelType, numberParticipants, names, setActiveSp
     clearTimeout(silenceTimer);
     console.log("Stopping timer");
     transcribingStop = true;
-    speak("", "The users stopped the session. Thank the participants and say goodbye.")
+    speak("", "The users stopped the session. Thank the participants and say goodbye. Set intervene to True.")
 
   };
 
@@ -171,7 +173,7 @@ export async function listener(modelType, numberParticipants, names, setActiveSp
 
 function silenceDetected() {
   console.log("Silence detected! No activity for 10 seconds.");
-  if(!transcribingStop){
+  if (!transcribingStop) {
     speak("", "No one has spoken for 15 seconds, intervene to reactivate the conversation.");
   }
 }
@@ -182,7 +184,15 @@ function speak(speakerId, text, modelType, numberParticipants, names) {
     speaking = true;
     clearTimeout(silenceTimer);
     console.log("Stopping timer for speaking");
-    const newPrompt = speakerId ? `${speakerId}: ${text}` : `(${text})`;
+    const indexOfSpeaker = speakerId && speakerId.includes("-") ? speakerId.split('-')[1] : null;
+    let speakerName;
+    if (indexOfSpeaker) {
+      speakerName = parseInt(indexOfSpeaker) === 1 ? "Emily" : names[parseInt(indexOfSpeaker) - 2];
+    }
+    else {
+      speakerName = "Unknown";
+    }
+    const newPrompt = speakerId ? `${speakerName}: ${text}` : `(${text})`;
     getModeratorResponse(newPrompt, modelType, numberParticipants, names).then(
       (response) => {
         if (!usePolly) {
@@ -226,6 +236,10 @@ export async function stopListener() {
   console.log("The session is stopping...");
   transcribingStop = true;
   clearTimeout(silenceTimer);
+  // speakText("Thank you for participating in the session. Goodbye!").then(() => {
+  //   console.log("Session ended");
+  // }
+  // );
   console.log("Stopping timer");
   if (!conversationTranscriber) {
     return;
