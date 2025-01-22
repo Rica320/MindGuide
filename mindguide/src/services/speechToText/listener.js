@@ -226,7 +226,7 @@ function speak(speakerId, text, modelType, numberParticipants, names) {
       speakerName = "Unknown";
     }
     const newPrompt = speakerId ? `${speakerName}: ${text}` : `(${text})`;
-    let forceIntervene = false;
+    let forceIntervene = false; // forceIntervene is used when we want to Emily to speak, idea is putting counter and detect too much silemce, them force it to be true
     getModeratorResponse(
       newPrompt,
       modelType,
