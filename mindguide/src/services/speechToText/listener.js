@@ -243,7 +243,10 @@ function speak(
       names,
       forceIntervene
     ).then((response) => {
-      setLlmResponse(response);
+      if (typeof setLlmResponse == "function") {
+        setLlmResponse(response);
+      }
+
       if (!usePolly) {
         // with the browser TTS
         const utterance = new SpeechSynthesisUtterance(response);

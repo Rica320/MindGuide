@@ -221,33 +221,37 @@ function App() {
           {activeSpeaker && activeSpeaker.length > 0 ? (
             activeSpeaker.map((speaker, index) =>
               speaker.name ? (
-                <div
-                  key={index}
-                  className="speaker-indicator"
-                  style={{
-                    position: "absolute",
-                    top: 10 + 140 * index,
-                    right: 10,
-                    width: 150, // Increased width for better visibility
-                    height: 100,
-                    backgroundColor: "#2C3E50", // Dark background for high contrast
-                    border: speaker.speaking
-                      ? "5px solid #1ABC9C"
-                      : "5px solid transparent", // Teal border when speaking
-                    borderRadius: 10, // More rounded corners for a smoother look
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3)", // Adding a subtle shadow for depth
-                    color: "#ECF0F1", // Light text for better readability on dark background
-                    fontSize: "16px", // Larger text for better readability
-                    fontWeight: "bold", // Making the text bold for emphasis
-                    textAlign: "center",
-                    padding: "10px",
-                  }}
-                >
-                  <p>{speaker.name || "No speaker"}</p>
-                </div>
+                (console.log("speaker name = ", speaker.name),
+                (
+                  <div
+                    key={index}
+                    className="speaker-indicator"
+                    style={{
+                      position: "absolute",
+                      top: 10 + 140 * index,
+                      right: 10,
+                      width: 150, // Increased width for better visibility
+                      height: 100,
+                      backgroundColor:
+                        speaker.name === "Agent Emily" ? "#8B0000" : "#2C3E50", // Dark red for Agent Emily, dark background for others
+                      border: speaker.speaking
+                        ? "5px solid #1ABC9C"
+                        : "5px solid transparent", // Teal border when speaking
+                      borderRadius: 10, // More rounded corners for a smoother look
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3)", // Adding a subtle shadow for depth
+                      color: "#ECF0F1", // Light text for better readability on dark background
+                      fontSize: "16px", // Larger text for better readability
+                      fontWeight: "bold", // Making the text bold for emphasis
+                      textAlign: "center",
+                      padding: "10px",
+                    }}
+                  >
+                    <p>{speaker.name || "No speaker"}</p>
+                  </div>
+                ))
               ) : (
                 <></>
               )
