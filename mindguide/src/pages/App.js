@@ -24,7 +24,7 @@ function App() {
   const [numberParticipants, setNumberParticipants] = useState(2);
   const [participantNames, setParticipantNames] = useState([]);
   const [activeSpeaker, setActiveSpeaker] = useState([]);
-
+  const [llmResponse, setLlmResponse] = useState("");
 
   useEffect(() => {
     fetch("/planet_svg.html")
@@ -58,7 +58,7 @@ function App() {
           participantNames
         ).then((response) => {
           log.info("Moderator: ", response);
-
+          setLlmResponse(response);
           if (!usePolly) {
             // with browser speech synthesis
             window.speechSynthesis.speak(
@@ -69,7 +69,12 @@ function App() {
             speakText(response);
           }
         });
-        listener(selectedModel, selectedParticipants, participantNames, setActiveSpeaker);
+        listener(
+          selectedModel,
+          selectedParticipants,
+          participantNames,
+          setActiveSpeaker
+        );
       }
       setIsListening(!isListening);
     } else {
@@ -144,8 +149,11 @@ function App() {
           </div>
           <div
             dangerouslySetInnerHTML={{ __html: svgContent }}
-            style={{ width: "100%", height: "80%" }}
+            style={{ width: "60%", height: "20%" }}
           />
+          {isListening && llmResponse && (
+            <div className="llm-response">{llmResponse}</div>
+          )}
           <div className="button-container">
             {/* Stop Button */}
             {isListening ? (
@@ -210,8 +218,8 @@ function App() {
             )}
           </div>
           {activeSpeaker && activeSpeaker.length > 0 ? (
-            activeSpeaker.map((speaker, index) => (
-              speaker.name ?
+            activeSpeaker.map((speaker, index) =>
+              speaker.name ? (
                 <div
                   key={index}
                   className="speaker-indicator"
@@ -222,7 +230,9 @@ function App() {
                     width: 150, // Increased width for better visibility
                     height: 100,
                     backgroundColor: "#2C3E50", // Dark background for high contrast
-                    border: speaker.speaking ? "5px solid #1ABC9C" : "5px solid transparent", // Teal border when speaking
+                    border: speaker.speaking
+                      ? "5px solid #1ABC9C"
+                      : "5px solid transparent", // Teal border when speaking
                     borderRadius: 10, // More rounded corners for a smoother look
                     display: "flex",
                     justifyContent: "center",
@@ -237,8 +247,10 @@ function App() {
                 >
                   <p>{speaker.name || "No speaker"}</p>
                 </div>
-                : <></>
-            ))
+              ) : (
+                <></>
+              )
+            )
           ) : (
             <div
               className="speaker-indicator"
@@ -249,7 +261,9 @@ function App() {
                 width: 150, // Increased width for better visibility
                 height: 100,
                 backgroundColor: "#2C3E50", // Dark background for high contrast
-                border: activeSpeaker ? "5px solid #1ABC9C" : "5px solid transparent", // Teal border when speaking
+                border: activeSpeaker
+                  ? "5px solid #1ABC9C"
+                  : "5px solid transparent", // Teal border when speaking
                 borderRadius: 10, // More rounded corners for a smoother look
                 display: "flex",
                 justifyContent: "center",
@@ -265,8 +279,6 @@ function App() {
               <p>No speaker</p>
             </div>
           )}
-
-
         </header>
       </div>
     );

@@ -25,7 +25,12 @@ if (!speechKey || !serviceRegion) {
   process.exit(1);
 }
 
-export async function listener(modelType, numberParticipants, names, setActiveSpeaker) {
+export async function listener(
+  modelType,
+  numberParticipants,
+  names,
+  setActiveSpeaker
+) {
   log.info("Starting listener");
   const speechConfig = sdk.SpeechConfig.fromSubscription(
     speechKey,
@@ -58,7 +63,7 @@ export async function listener(modelType, numberParticipants, names, setActiveSp
     ) {
       console.log(
         "\nDisable transcribing as Moderator is speaking:" +
-        evt.result.speakerId
+          evt.result.speakerId
       );
       return;
     }
@@ -76,7 +81,13 @@ export async function listener(modelType, numberParticipants, names, setActiveSp
       }
 
       // speak
-      speak(evt.result.speakerId, evt.result.text, modelType, numberParticipants, names);
+      speak(
+        evt.result.speakerId,
+        evt.result.text,
+        modelType,
+        numberParticipants,
+        names
+      );
     } else if (evt.result.reason === sdk.ResultReason.NoMatch) {
       console.log(
         `\tNOMATCH: Speech could not be TRANSCRIBED: ${evt.result.noMatchDetails}`
@@ -107,15 +118,23 @@ export async function listener(modelType, numberParticipants, names, setActiveSp
 
     setActiveSpeaker((prevActiveSpeakers) => {
       // Add the speaker if it's not already in the list
-      if (!prevActiveSpeakers.includes({ id: evt.result.speakerId, speaking: true })) {
-
+      if (
+        !prevActiveSpeakers.includes({
+          id: evt.result.speakerId,
+          speaking: true,
+        })
+      ) {
         // set all speaking to false
         prevActiveSpeakers.forEach((speaker) => {
           speaker.speaking = false;
         });
 
         // check if any with same id if so set speaking to true
-        if (prevActiveSpeakers.some((speaker) => speaker.id === evt.result.speakerId)) {
+        if (
+          prevActiveSpeakers.some(
+            (speaker) => speaker.id === evt.result.speakerId
+          )
+        ) {
           return prevActiveSpeakers.map((speaker) => {
             if (speaker.id === evt.result.speakerId) {
               speaker.speaking = true;
@@ -126,11 +145,17 @@ export async function listener(modelType, numberParticipants, names, setActiveSp
 
         let indexOfSpeaker = evt.result.speakerId.split("-")[1];
 
-        return [...prevActiveSpeakers, {
-          id: evt.result.speakerId,
-          name: parseInt(indexOfSpeaker) === 1 ? "Emily" : names[parseInt(indexOfSpeaker) - 2],
-          speaking: true,
-        }];
+        return [
+          ...prevActiveSpeakers,
+          {
+            id: evt.result.speakerId,
+            name:
+              parseInt(indexOfSpeaker) === 1
+                ? "Agent Emily"
+                : names[parseInt(indexOfSpeaker) - 2],
+            speaking: true,
+          },
+        ];
       }
       return prevActiveSpeakers; // Otherwise, do nothing
     });
@@ -141,8 +166,10 @@ export async function listener(modelType, numberParticipants, names, setActiveSp
     clearTimeout(silenceTimer);
     console.log("Stopping timer");
     transcribingStop = true;
-    speak("", "The users stopped the session. Thank the participants and say goodbye. Set intervene to True.")
-
+    speak(
+      "",
+      "The users stopped the session. Thank the participants and say goodbye. Set intervene to True."
+    );
   };
 
   // Connect callbacks to conversation transcriber events
@@ -174,7 +201,10 @@ export async function listener(modelType, numberParticipants, names, setActiveSp
 function silenceDetected() {
   console.log("Silence detected! No activity for 10 seconds.");
   if (!transcribingStop) {
-    speak("", "No one has spoken for 15 seconds, intervene to reactivate the conversation.");
+    speak(
+      "",
+      "No one has spoken for 15 seconds, intervene to reactivate the conversation."
+    );
   }
 }
 
@@ -184,46 +214,54 @@ function speak(speakerId, text, modelType, numberParticipants, names) {
     speaking = true;
     clearTimeout(silenceTimer);
     console.log("Stopping timer for speaking");
-    const indexOfSpeaker = speakerId && speakerId.includes("-") ? speakerId.split('-')[1] : null;
+    const indexOfSpeaker =
+      speakerId && speakerId.includes("-") ? speakerId.split("-")[1] : null;
     let speakerName;
     if (indexOfSpeaker) {
-      speakerName = parseInt(indexOfSpeaker) === 1 ? "Emily" : names[parseInt(indexOfSpeaker) - 2];
-    }
-    else {
+      speakerName =
+        parseInt(indexOfSpeaker) === 1
+          ? "Agent Emily"
+          : names[parseInt(indexOfSpeaker) - 2];
+    } else {
       speakerName = "Unknown";
     }
     const newPrompt = speakerId ? `${speakerName}: ${text}` : `(${text})`;
-    getModeratorResponse(newPrompt, modelType, numberParticipants, names).then(
-      (response) => {
-        if (!usePolly) {
-          // with the browser TTS
-          const utterance = new SpeechSynthesisUtterance(response);
-          document.querySelector(".App-header").classList.add("blue");
-          utterance.onend = () => {
-            speaking = false;
-            document.querySelector(".App-header").classList.remove("blue");
-            clearTimeout(silenceTimer);
-            silenceTimer = setTimeout(() => {
-              silenceDetected();
-            }, 15000); // 15 second
-            console.log("Starting timer for speaking");
-          };
-          window.speechSynthesis.speak(utterance);
-        } else {
-          // with polly
-          document.querySelector(".App-header").classList.add("blue");
-          speakText(response).then(() => {
-            speaking = false;
-            document.querySelector(".App-header").classList.remove("blue");
-            clearTimeout(silenceTimer);
-            silenceTimer = setTimeout(() => {
-              silenceDetected();
-            }, 15000); // 15 second
-            console.log("Starting timer for speaking");
-          });
-        }
+    let forceIntervene = false;
+    getModeratorResponse(
+      newPrompt,
+      modelType,
+      numberParticipants,
+      names,
+      forceIntervene
+    ).then((response) => {
+      if (!usePolly) {
+        // with the browser TTS
+        const utterance = new SpeechSynthesisUtterance(response);
+        document.querySelector(".App-header").classList.add("blue");
+        utterance.onend = () => {
+          speaking = false;
+          document.querySelector(".App-header").classList.remove("blue");
+          clearTimeout(silenceTimer);
+          silenceTimer = setTimeout(() => {
+            silenceDetected();
+          }, 15000); // 15 second
+          console.log("Starting timer for speaking");
+        };
+        window.speechSynthesis.speak(utterance);
+      } else {
+        // with polly
+        document.querySelector(".App-header").classList.add("blue");
+        speakText(response).then(() => {
+          speaking = false;
+          document.querySelector(".App-header").classList.remove("blue");
+          clearTimeout(silenceTimer);
+          silenceTimer = setTimeout(() => {
+            silenceDetected();
+          }, 15000); // 15 second
+          console.log("Starting timer for speaking");
+        });
       }
-    );
+    });
   }
 }
 

@@ -261,6 +261,7 @@
 }
 
 .button-container {
+  padding-top: 20px;
   position: absolute;
   top: 85%;
   left: 50%;
@@ -435,4 +436,14 @@ select option {
   border-color: #007bff;
   outline: none;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.llm-response {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-size: 1rem;
+  color: #333;
 }
