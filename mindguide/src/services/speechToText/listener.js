@@ -29,7 +29,8 @@ export async function listener(
   modelType,
   numberParticipants,
   names,
-  setActiveSpeaker
+  setActiveSpeaker,
+  setLlmResponse
 ) {
   log.info("Starting listener");
   const speechConfig = sdk.SpeechConfig.fromSubscription(
@@ -86,7 +87,8 @@ export async function listener(
         evt.result.text,
         modelType,
         numberParticipants,
-        names
+        names,
+        setLlmResponse
       );
     } else if (evt.result.reason === sdk.ResultReason.NoMatch) {
       console.log(
@@ -208,7 +210,14 @@ function silenceDetected() {
   }
 }
 
-function speak(speakerId, text, modelType, numberParticipants, names) {
+function speak(
+  speakerId,
+  text,
+  modelType,
+  numberParticipants,
+  names,
+  setLlmResponse
+) {
   if (!speaking) {
     // speak
     speaking = true;
@@ -234,6 +243,7 @@ function speak(speakerId, text, modelType, numberParticipants, names) {
       names,
       forceIntervene
     ).then((response) => {
+      setLlmResponse(response);
       if (!usePolly) {
         // with the browser TTS
         const utterance = new SpeechSynthesisUtterance(response);

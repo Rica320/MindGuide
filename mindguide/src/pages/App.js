@@ -73,7 +73,8 @@ function App() {
           selectedModel,
           selectedParticipants,
           participantNames,
-          setActiveSpeaker
+          setActiveSpeaker,
+          setLlmResponse
         );
       }
       setIsListening(!isListening);
