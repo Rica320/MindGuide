@@ -164,7 +164,10 @@ export async function listener(
   };
 
   const stopCallback = (s, evt) => {
-    console.log(`CLOSING on ${evt}`);
+    console.log(`CLOSING on ${evt.reason}`);
+    if (evt.reason === sdk.CancellationReason.Error) {
+      console.log(`CANCELED: ErrorDetails=${evt.errorDetails}`);
+    }
     clearTimeout(silenceTimer);
     console.log("Stopping timer");
     transcribingStop = true;
@@ -186,6 +189,7 @@ export async function listener(
 
   try {
     // Start transcribing asynchronously
+    console.log("Starting transcribing...");
     await conversationTranscriber.startTranscribingAsync();
 
     // Waits for completion
