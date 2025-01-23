@@ -18,6 +18,58 @@ const language = "en-US";
 let transcribingStop = false;
 let conversationTranscriber;
 
+function updateActiveSpeakers(prevActiveSpeakers, evt, names, emily) {
+  if (
+    !prevActiveSpeakers.some(
+      (speaker) => speaker.id === evt.result.speakerId && speaker.speaking
+    ) ||
+    emily
+  ) {
+    // set all speaking to false
+    prevActiveSpeakers.forEach((speaker) => {
+      speaker.speaking = false;
+    });
+
+    // If emily is true, set Agent Emily as the active speaker
+    if (emily) {
+      return [
+        ...prevActiveSpeakers,
+        {
+          id: "emily",
+          name: "Agent Emily",
+          speaking: true,
+        },
+      ];
+    }
+
+    // check if any with same id if so set speaking to true
+    if (
+      prevActiveSpeakers.some((speaker) => speaker.id === evt.result.speakerId)
+    ) {
+      return prevActiveSpeakers.map((speaker) => {
+        if (speaker.id === evt.result.speakerId) {
+          speaker.speaking = true;
+        }
+        return speaker;
+      });
+    }
+
+    let indexOfSpeaker = evt.result.speakerId.split("-")[1];
+
+    return [
+      ...prevActiveSpeakers,
+      {
+        id: evt.result.speakerId,
+        name: Number.isInteger(parseInt(indexOfSpeaker))
+          ? names[parseInt(indexOfSpeaker) - 1]
+          : "Agent Emily",
+        speaking: true,
+      },
+    ];
+  }
+  return prevActiveSpeakers; // Otherwise, do nothing
+}
+
 if (!speechKey || !serviceRegion) {
   console.error(
     "Please set the SPEECH_KEY and SPEECH_REGION environment variables."
@@ -81,6 +133,10 @@ export async function listener(
         return;
       }
 
+      // update active speakers as Emily is speaking
+      setActiveSpeaker((prevActiveSpeakers) => {
+        return updateActiveSpeakers(prevActiveSpeakers, evt, names, true);
+      });
       // speak
       speak(
         evt.result.speakerId,
@@ -119,47 +175,7 @@ export async function listener(
     }
 
     setActiveSpeaker((prevActiveSpeakers) => {
-      // Add the speaker if it's not already in the list
-      if (
-        !prevActiveSpeakers.includes({
-          id: evt.result.speakerId,
-          speaking: true,
-        })
-      ) {
-        // set all speaking to false
-        prevActiveSpeakers.forEach((speaker) => {
-          speaker.speaking = false;
-        });
-
-        // check if any with same id if so set speaking to true
-        if (
-          prevActiveSpeakers.some(
-            (speaker) => speaker.id === evt.result.speakerId
-          )
-        ) {
-          return prevActiveSpeakers.map((speaker) => {
-            if (speaker.id === evt.result.speakerId) {
-              speaker.speaking = true;
-            }
-            return speaker;
-          });
-        }
-
-        let indexOfSpeaker = evt.result.speakerId.split("-")[1];
-
-        return [
-          ...prevActiveSpeakers,
-          {
-            id: evt.result.speakerId,
-            name:
-              parseInt(indexOfSpeaker) === 1
-                ? "Agent Emily"
-                : names[parseInt(indexOfSpeaker) - 2],
-            speaking: true,
-          },
-        ];
-      }
-      return prevActiveSpeakers; // Otherwise, do nothing
+      return updateActiveSpeakers(prevActiveSpeakers, evt, names);
     });
   };
 
@@ -231,10 +247,9 @@ function speak(
       speakerId && speakerId.includes("-") ? speakerId.split("-")[1] : null;
     let speakerName;
     if (indexOfSpeaker) {
-      speakerName =
-        parseInt(indexOfSpeaker) === 1
-          ? "Agent Emily"
-          : names[parseInt(indexOfSpeaker) - 2];
+      speakerName = Number.isInteger(parseInt(indexOfSpeaker))
+        ? names[parseInt(indexOfSpeaker) - 1]
+        : "Agent Emily";
     } else {
       speakerName = "Unknown";
     }
