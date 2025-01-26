@@ -49,8 +49,6 @@ export async function getOpenAIResponse(
     role: "system",
     content:
       role_behaviors[modelType] +
-      'YOU MUST SET "intervene" to true ON THESE SITUATIONS:\n' +
-      "- After participant introduces themselves for the first time.\n" +
       'YOU MUST SET "intervene" to false EXCEPT ONLY ON THESE SITUATIONS:\n' +
       "- When you are starting the session.\n" +
       "- If someone is using inappropriate language and insulting\n" +

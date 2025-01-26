@@ -25,6 +25,7 @@ function updateActiveSpeakers(prevActiveSpeakers, evt, names, emily) {
     ) ||
     emily
   ) {
+    
     // set all speaking to false
     prevActiveSpeakers.forEach((speaker) => {
       speaker.speaking = false;
@@ -32,6 +33,17 @@ function updateActiveSpeakers(prevActiveSpeakers, evt, names, emily) {
 
     // If emily is true, set Agent Emily as the active speaker
     if (emily) {
+      
+          if (
+            prevActiveSpeakers.some((speaker) => speaker.id === 'emily')
+          ) {
+            return prevActiveSpeakers.map((speaker) => {
+              if (speaker.id === 'emily') {
+                speaker.speaking = true;
+              }
+              return speaker;
+            });
+          }
       return [
         ...prevActiveSpeakers,
         {
@@ -41,6 +53,8 @@ function updateActiveSpeakers(prevActiveSpeakers, evt, names, emily) {
         },
       ];
     }
+
+
 
     // check if any with same id if so set speaking to true
     if (
@@ -61,7 +75,7 @@ function updateActiveSpeakers(prevActiveSpeakers, evt, names, emily) {
       {
         id: evt.result.speakerId,
         name: Number.isInteger(parseInt(indexOfSpeaker))
-          ? names[parseInt(indexOfSpeaker) - 1]
+          ? names[parseInt(indexOfSpeaker) - 2]
           : "Agent Emily",
         speaking: true,
       },
@@ -111,7 +125,7 @@ export async function listener(
   const onTranscribed = (s, evt) => {
     if (
       // As moderator speaks always as a first speaker, he is Guest-1
-      //evt.result.speakerId === "Guest-1" ||
+      evt.result.speakerId === "Guest-1" ||
       evt.result.speakerId === "Unknown"
     ) {
       console.log(
@@ -133,10 +147,6 @@ export async function listener(
         return;
       }
 
-      // update active speakers as Emily is speaking
-      setActiveSpeaker((prevActiveSpeakers) => {
-        return updateActiveSpeakers(prevActiveSpeakers, evt, names, true);
-      });
       // speak
       speak(
         evt.result.speakerId,
@@ -159,7 +169,7 @@ export async function listener(
     //Set a new  timer
     silenceTimer = setTimeout(() => {
       silenceDetected();
-    }, 10000); // 15 second
+    }, 15000); // 15 second
     console.log("Reset timer on transcribing");
     console.log("\nTRANSCRIBING:");
     console.log(`\tText=${evt.result.text}`);
@@ -167,9 +177,13 @@ export async function listener(
 
     // if the moderator is speaking the transcription is disabled
     if (
-      //evt.result.speakerId === "Guest-1" ||
+      evt.result.speakerId === "Guest-1" ||
       evt.result.speakerId === "Unknown"
     ) {
+      // update active speakers as Emily is speaking
+      setActiveSpeaker((prevActiveSpeakers) => {
+        return updateActiveSpeakers(prevActiveSpeakers, evt, names, true);
+      });
       console.log("\nTRANSCRIBE DISABLED...Moderator speaking:");
       return;
     }
@@ -248,8 +262,10 @@ function speak(
     let speakerName;
     if (indexOfSpeaker) {
       speakerName = Number.isInteger(parseInt(indexOfSpeaker))
-        ? names[parseInt(indexOfSpeaker) - 1]
+        ? names[parseInt(indexOfSpeaker) - 2]
         : "Agent Emily";
+      console.log("CURRENT SPEAKER: ", speakerName);
+
     } else {
       speakerName = "Unknown";
     }
@@ -276,7 +292,7 @@ function speak(
           clearTimeout(silenceTimer);
           silenceTimer = setTimeout(() => {
             silenceDetected();
-          }, 10000); // 15 second
+          }, 15000); // 15 second
           console.log("Starting timer for speaking");
         };
         window.speechSynthesis.speak(utterance);
@@ -289,7 +305,7 @@ function speak(
           clearTimeout(silenceTimer);
           silenceTimer = setTimeout(() => {
             silenceDetected();
-          }, 10000); // 15 second
+          }, 15000); // 15 second
           console.log("Starting timer for speaking");
         });
       }
