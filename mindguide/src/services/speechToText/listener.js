@@ -159,7 +159,7 @@ export async function listener(
     //Set a new  timer
     silenceTimer = setTimeout(() => {
       silenceDetected();
-    }, 15000); // 15 second
+    }, 10000); // 15 second
     console.log("Reset timer on transcribing");
     console.log("\nTRANSCRIBING:");
     console.log(`\tText=${evt.result.text}`);
@@ -276,7 +276,7 @@ function speak(
           clearTimeout(silenceTimer);
           silenceTimer = setTimeout(() => {
             silenceDetected();
-          }, 15000); // 15 second
+          }, 10000); // 15 second
           console.log("Starting timer for speaking");
         };
         window.speechSynthesis.speak(utterance);
@@ -289,7 +289,7 @@ function speak(
           clearTimeout(silenceTimer);
           silenceTimer = setTimeout(() => {
             silenceDetected();
-          }, 15000); // 15 second
+          }, 10000); // 15 second
           console.log("Starting timer for speaking");
         });
       }
