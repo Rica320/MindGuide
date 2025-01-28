@@ -58,7 +58,7 @@ export async function getOpenAIResponse(
       "Please keep in mind that sending intervene as false can be done only 3 consecutive times as maximun." +
       "Take a big breath and think before you intervene. Remember that the goal is to help the participants to express themselves and interact with each other." +
       'Otherwise when you need to talk put your dialog in the "response" field and set "intervene" to true. When the conversation is ending, ' +
-      "say goodbye and thank the participants. Start the session after receiving this message.",
+      "say goodbye and thank the participants. Start the session after receiving this message. Don't mention your role to the participants.",
   };
 
   const result = await client.chat.completions.create({

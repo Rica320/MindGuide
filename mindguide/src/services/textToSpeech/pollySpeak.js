@@ -3,6 +3,7 @@ import AWS from 'aws-sdk';
 export const usePolly = process.env.REACT_APP_USE_POLLY === "true";
 
 let Polly;
+let audio;
 
 if (usePolly) {
     AWS.config.update({
@@ -12,6 +13,14 @@ if (usePolly) {
       });
     
     Polly = new AWS.Polly();
+}
+
+export function stopSpeaking() {
+    if (audio) {
+        audio.pause();
+        audio.currentTime = audio.duration;
+        audio = null;
+    }
 }
 
 export function speakText(text, outputFormat = 'mp3', voiceId = 'Ruth', engine='generative') {
@@ -40,7 +49,7 @@ export function speakText(text, outputFormat = 'mp3', voiceId = 'Ruth', engine='
                 const audioUrl = URL.createObjectURL(audioBlob);
 
                 // Riproduci l'audio usando l'oggetto Audio
-                const audio = new Audio(audioUrl);
+                audio = new Audio(audioUrl);
                 audio.play();
 
                 // Rilascia l'URL temporaneo al termine dell'audio per risparmiare memoria

@@ -5,7 +5,7 @@ import VoiceRecognition from "../components/VoiceRecognition";
 import log from "../utils/logger";
 import HandIcon from "../assets/stop-hand.svg";
 
-const { usePolly, speakText } = require("../services/textToSpeech/pollySpeak");
+const { usePolly, speakText, stopSpeaking } = require("../services/textToSpeech/pollySpeak");
 console.log("use polly = ", usePolly);
 
 if (env === "production") {
@@ -202,8 +202,11 @@ function App() {
               <button
                 className="terminate-button"
                 onClick={() => {
-                  endSession();
-                  window.speechSynthesis.cancel();
+                  if (!usePolly) {
+                    window.speechSynthesis.cancel();
+                  } else {
+                    stopSpeaking();
+                  }
                   document
                     .querySelector(".App-header")
                     .classList.remove("blue");

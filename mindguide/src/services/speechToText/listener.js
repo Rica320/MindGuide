@@ -168,7 +168,7 @@ export async function listener(
     clearTimeout(silenceTimer);
     //Set a new  timer
     silenceTimer = setTimeout(() => {
-      silenceDetected();
+      silenceDetected(setLlmResponse);
     }, 15000); // 15 second
     console.log("Reset timer on transcribing");
     console.log("\nTRANSCRIBING:");
@@ -203,7 +203,11 @@ export async function listener(
     transcribingStop = true;
     speak(
       "",
-      "The users stopped the session. Thank the participants and say goodbye. Set intervene to True."
+      "The users stopped the session. Thank the participants and say goodbye. Set intervene to True.",
+      null,
+      null,
+      null,
+      setLlmResponse
     );
   };
 
@@ -234,12 +238,17 @@ export async function listener(
   }
 }
 
-function silenceDetected() {
+function silenceDetected(setLlmResponse) {
   console.log("Silence detected! No activity for 10 seconds.");
   if (!transcribingStop) {
     speak(
       "",
-      "No one has spoken for 15 seconds, intervene to reactivate the conversation."
+      "No one has spoken for 15 seconds, intervene to reactivate the conversation.",
+      null,
+      null,
+      null,
+      setLlmResponse
+
     );
   }
 }
@@ -291,7 +300,7 @@ function speak(
           document.querySelector(".App-header").classList.remove("blue");
           clearTimeout(silenceTimer);
           silenceTimer = setTimeout(() => {
-            silenceDetected();
+            silenceDetected(setLlmResponse);
           }, 15000); // 15 second
           console.log("Starting timer for speaking");
         };
@@ -304,7 +313,7 @@ function speak(
           document.querySelector(".App-header").classList.remove("blue");
           clearTimeout(silenceTimer);
           silenceTimer = setTimeout(() => {
-            silenceDetected();
+            silenceDetected(setLlmResponse);
           }, 15000); // 15 second
           console.log("Starting timer for speaking");
         });
